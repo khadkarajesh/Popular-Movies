@@ -1,29 +1,47 @@
 package com.example.popularmovies.activities.activities;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.activities.base.BaseActivity;
+import com.example.popularmovies.activities.data.Constants;
 import com.example.popularmovies.activities.model.Movie;
+import com.example.popularmovies.activities.model.MovieComment;
+import com.example.popularmovies.activities.model.MovieComments;
+import com.example.popularmovies.activities.rest.service.IMovieService;
 import com.example.popularmovies.activities.util.Utility;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import retrofit.Call;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class MovieDetailActivity extends BaseActivity {
 
@@ -32,11 +50,17 @@ public class MovieDetailActivity extends BaseActivity {
     public static final String MOVIE_OBJECT = "data";
 
 
+    @Bind(R.id.iv_play_movie)
+    ImageView ivPlayMovie;
+
     @Bind(R.id.img_movie_poster)
     ImageView moviePoster;
 
-    @Bind(R.id.img_mini_poster)
-    ImageView imgMiniPoster;
+    @Bind(R.id.tv_movie_title)
+    TextView movieTitle;
+
+    @Bind(R.id.tv_releasing_date)
+    TextView releasingDate;
 
     @Bind(R.id.tv_overview)
     TextView overView;
@@ -53,28 +77,20 @@ public class MovieDetailActivity extends BaseActivity {
     @Bind(R.id.fab)
     FloatingActionButton floatingActionButton;
 
+ /*   @Bind(R.id.rv_comments)
+    RecyclerView rvComments;*/
+
+    @Bind(R.id.ll_comments)
+    LinearLayout llComments;
+
     Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       /* if (savedInstanceState == null) {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
-            Bundle bundle=new Bundle();
-            bundle.putParcelable(MovieDetailFragment.MOVIE_OBJECT, getIntent().getParcelableExtra(MovieDetailFragment.MOVIE_OBJECT));
-
-            Movie movie=getIntent().getParcelableExtra(MovieDetailFragment.MOVIE_OBJECT);
-            Log.e(TAG, "data" + movie.overview);
-            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
-            movieDetailFragment.setArguments(bundle);
-            getFragmentManager().beginTransaction()
-                    .add(R.id.movieDetailContainer,movieDetailFragment)
-                    .commit();
-        }
-
-
-*/
         movie = getIntent().getParcelableExtra(MovieDetailActivity.MOVIE_OBJECT);
 
 
@@ -109,15 +125,13 @@ public class MovieDetailActivity extends BaseActivity {
 
     private void setData() {
 
-        Glide.with(this).load(Utility.getImageUri(movie.posterPath))
-                .centerCrop()
+        Picasso.with(this).load(Utility.getImageUri(movie.posterPath))
                 .into(moviePoster);
-
-        Glide.with(this).load(Utility.getImageUriOfSmallSize(movie.posterPath)).into(imgMiniPoster);
-
-        ratingBar.setRating(3.5f);
-
+        movieTitle.setText(movie.title);
+        ratingBar.setRating(movie.voteAverage);
         overView.setText(movie.overview);
+
+        getCommentsFromWeb();
     }
 
     @Override
@@ -138,11 +152,6 @@ public class MovieDetailActivity extends BaseActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == android.R.id.home) {
             onBackPressed();
         }
@@ -165,4 +174,58 @@ public class MovieDetailActivity extends BaseActivity {
         fab.setRippleColor(lightVibrantColor);
         fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
     }
+
+    @OnClick({R.id.iv_play_movie})
+    public void onClick() {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + "kl8F-8tR8to"));
+        startActivity(intent);
+    }
+
+    private void getCommentsFromWeb() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://api.themoviedb.org/")
+                .client(new OkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        IMovieService iMovieService = retrofit.create(IMovieService.class);
+
+        Call<MovieComments> movieCommentsCall = iMovieService.getComments(movie.id, Constants.API_KEY);
+        movieCommentsCall.enqueue(new retrofit.Callback<MovieComments>() {
+            @Override
+            public void onResponse(Response<MovieComments> response) {
+                Log.e(TAG, "success" + response.body().toString());
+                Log.e(TAG, "value" + response.body().movieCommentList.get(0).content);
+
+                List<MovieComment> comments = response.body().movieCommentList;
+                showMovieComments(comments);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(TAG, "failure failed" + t.getMessage());
+            }
+        });
+    }
+
+    private void showMovieComments(List<MovieComment> response) {
+       /* if (response != null) {
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            rvComments.setLayoutManager(linearLayoutManager);
+            rvComments.setAdapter(new MovieCommentAdapter(response));
+        }*/
+
+        if(response!=null) {
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_movie_comments, null);
+            TextView tvCommenterName = ButterKnife.findById(view, R.id.tv_commenter_name);
+            TextView tvComment = ButterKnife.findById(view, R.id.tv_comment);
+            for (MovieComment comment : response) {
+                tvComment.setText(comment.content);
+                tvCommenterName.setText(comment.author);
+                llComments.addView(view);
+            }
+        }
+
+    }
+
 }

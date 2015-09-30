@@ -21,6 +21,9 @@ public class MovieActivity extends BaseActivity {
     private static final String SORT_BY_POPULARITY_DESC = "popularity.desc";
     private static final String API_KEY = "3d9f6ef05faa3072ee2caf7fb6870964";
 
+    //for video
+    //http://api.themoviedb.org/3/movie/207703/videos?api_key=3d9f6ef05faa3072ee2caf7fb6870964
+
 
     private static final String POSTER_PATH_BASE_URL = "http://image.tmdb.org/t/p/w185/tbhdm8UJAb4ViCTsulYFL3lxMCd.jpg";
 

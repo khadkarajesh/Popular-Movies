@@ -5,7 +5,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.activities.base.BaseActivity;
 
@@ -20,7 +19,9 @@ public class TestActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Glide.with(this).load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg ").centerCrop().into(myImageView);
+
+
+        //Glide.with(this).load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg ").centerCrop().into(myImageView);
 
     }
 

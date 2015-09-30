@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#33a8a8a8"
     android:orientation="vertical"
+     android:clipToPadding="true"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.Toolbar
@@ -14,6 +15,7 @@
         android:background="?attr/colorPrimary"
         android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
+        android:clipToPadding="true"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -24,6 +26,7 @@
         android:layout_marginTop="5dp"
         android:orientation="vertical"
         android:paddingBottom="5dp"
+        android:clipToPadding="true"
         android:paddingLeft="5dp"
         android:paddingRight="5dp">
 

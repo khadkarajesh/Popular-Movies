@@ -18,5 +18,9 @@
         <item name="rippleColor">@android:color/white</item>
     </style>
 
+    <style name="StatusBarTransparent" parent="Theme.AppCompat">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
 
 </resources>
