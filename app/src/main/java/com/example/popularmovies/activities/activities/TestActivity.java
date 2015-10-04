@@ -10,6 +10,9 @@ import com.example.popularmovies.activities.activities.base.BaseActivity;
 
 import butterknife.Bind;
 
+/**
+ * this activity is kept intentionally  for checking different view.
+ */
 public class TestActivity extends BaseActivity {
 
     @Bind(R.id.myImageView)
@@ -18,9 +21,6 @@ public class TestActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         //Glide.with(this).load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg ").centerCrop().into(myImageView);
 
     }

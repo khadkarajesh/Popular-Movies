@@ -1,4 +1,4 @@
-package com.example.popularmovies.activities.model;
+package com.example.popularmovies.activities.rest.model;
 
 import com.google.gson.annotations.SerializedName;
 

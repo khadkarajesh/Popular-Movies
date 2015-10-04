@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.popularmovies.R;
-import com.example.popularmovies.activities.model.MovieComment;
+import com.example.popularmovies.activities.rest.model.MovieComment;
 
 import java.util.List;
 

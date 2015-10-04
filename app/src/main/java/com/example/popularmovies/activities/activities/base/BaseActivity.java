@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import butterknife.ButterKnife;
 
 /**
- * Created by rajesh on 9/18/15.
+ * Base activity.
  */
 public abstract class BaseActivity extends AppCompatActivity {
     @Override
@@ -16,5 +16,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
+    /**
+     * abstract method which returns id of layout in the form of R.layout.layout_name.
+     *
+     * @return id of layout in the form of R.layout.layout_name
+     */
     protected abstract int getLayout();
 }

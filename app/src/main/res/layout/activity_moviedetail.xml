@@ -28,6 +28,7 @@
                 android:layout_height="300dp"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
+                android:transitionName="@string/transition_string"
                 app:layout_collapseMode="parallax" />
 
             <ImageView
@@ -60,6 +61,7 @@
             android:id="@+id/rl_rating_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="32dp"
@@ -164,6 +166,7 @@
                         style="@style/TextAppearance.AppCompat.Headline"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
                         android:gravity="center_vertical"
                         android:text="Overview"
                         android:textSize="16sp" />
@@ -175,11 +178,16 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- <android.support.v7.widget.RecyclerView
-                 android:id="@+id/rv_comments"
-                 android:layout_width="match_parent"
-                 android:layout_height="200dp"
-                 android:background="#ff0000" />-->
+            <TextView
+                android:id="@+id/tv_comment_title"
+                style="@style/TextAppearance.AppCompat.Headline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Comments"
+                android:textSize="16sp" />
+
             <LinearLayout
                 android:id="@+id/ll_comments"
                 android:layout_width="match_parent"

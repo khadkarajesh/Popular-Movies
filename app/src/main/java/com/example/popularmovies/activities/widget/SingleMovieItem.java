@@ -11,8 +11,7 @@ import android.widget.TextView;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.activities.MovieDetailActivity;
-import com.example.popularmovies.activities.fragment.MovieDetailFragment;
-import com.example.popularmovies.activities.model.Movie;
+import com.example.popularmovies.activities.rest.model.Movie;
 import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by rajesh on 9/18/15.
+ * View for showing the movie poster and title for single movie.
  */
 public class SingleMovieItem extends FrameLayout {
 
@@ -55,6 +54,7 @@ public class SingleMovieItem extends FrameLayout {
     public SingleMovieItem(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
+
         View view = LayoutInflater.from(context).inflate(R.layout.single_movie_item, this, true);
         ButterKnife.bind(this, view);
 
@@ -62,28 +62,38 @@ public class SingleMovieItem extends FrameLayout {
 
     }
 
+    /**
+     * sets poster and title of the movie
+     *
+     * @param movie movie object containing the single movie details.
+     * @throws MalformedURLException
+     */
     public void setData(Movie movie) throws MalformedURLException {
-
         this.movie = movie;
-      /*  Glide.with(getContext())
-                .load(getImageUri(movie.posterPath))
-                .placeholder(R.drawable.abc)
-                .into(imgPoster);
-        Log.e(TAG, "uri" + getImageUri(movie.posterPath));*/
-
         Picasso.with(getContext()).load(getImageUri(movie.posterPath)).placeholder(R.drawable.abc).into(imgPoster);
         tvMovieTitle.setText(movie.title);
 
     }
 
+    /**
+     * returns the complete url of movie poster by concatenating with base url.
+     *
+     * @param uri
+     * @return
+     */
     public String getImageUri(String uri) {
         return IMAGE_POSTER_BASE_URL + "/" + uri;
     }
 
+    /**
+     * for handling the click event of movie poster
+     */
     @OnClick({R.id.img_movie_poster})
     public void onClick() {
+
         Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-        intent.putExtra(MovieDetailFragment.MOVIE_OBJECT, movie);
+        intent.putExtra(MovieDetailActivity.MOVIE_OBJECT, movie);
+
         context.startActivity(intent);
     }
 }

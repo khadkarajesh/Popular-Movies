@@ -24,12 +24,12 @@ import android.widget.TextView;
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.activities.base.BaseActivity;
 import com.example.popularmovies.activities.data.Constants;
-import com.example.popularmovies.activities.model.Movie;
-import com.example.popularmovies.activities.model.MovieComment;
-import com.example.popularmovies.activities.model.MovieComments;
-import com.example.popularmovies.activities.rest.service.IMovieService;
+import com.example.popularmovies.activities.rest.model.Movie;
+import com.example.popularmovies.activities.rest.model.MovieComment;
+import com.example.popularmovies.activities.rest.model.MovieComments;
+import com.example.popularmovies.activities.rest.RetrofitManager;
+import com.example.popularmovies.activities.rest.model.MovieTrailerInfo;
 import com.example.popularmovies.activities.util.Utility;
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -38,11 +38,11 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Call;
-import retrofit.GsonConverterFactory;
 import retrofit.Response;
-import retrofit.Retrofit;
 
+/**
+ * shows the details{movie title,release date, rating,comments,trailer via intent} of single movie.
+ */
 public class MovieDetailActivity extends BaseActivity {
 
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
@@ -77,29 +77,38 @@ public class MovieDetailActivity extends BaseActivity {
     @Bind(R.id.fab)
     FloatingActionButton floatingActionButton;
 
- /*   @Bind(R.id.rv_comments)
-    RecyclerView rvComments;*/
-
     @Bind(R.id.ll_comments)
     LinearLayout llComments;
 
+    @Bind(R.id.tv_comment_title)
+
+    TextView tvCommentTitle;
     Movie movie;
+    RetrofitManager retrofitManager = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //for making status bar transulent
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
+        //get the single movie data passed form intent
         movie = getIntent().getParcelableExtra(MovieDetailActivity.MOVIE_OBJECT);
 
-
+        //set the toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         collapsingToolbarLayout.setTitle(movie.title);
         collapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent));
 
+        //if movie doesn't contain the comment make comment textView invisible
+        tvCommentTitle.setVisibility(View.GONE);
+
+        //register the retrofit for network call
+        retrofitManager = RetrofitManager.getInstance();
 
         setData();
 
@@ -123,6 +132,9 @@ public class MovieDetailActivity extends BaseActivity {
 
     }
 
+    /**
+     * sets the detail of movie.
+     */
     private void setData() {
 
         Picasso.with(this).load(Utility.getImageUri(movie.posterPath))
@@ -136,7 +148,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     @Override
     protected int getLayout() {
-        return R.layout.fragment_movie_detail_duplicate;
+        return R.layout.activity_moviedetail;
     }
 
     @Override
@@ -177,54 +189,83 @@ public class MovieDetailActivity extends BaseActivity {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + "kl8F-8tR8to"));
-        startActivity(intent);
+
+        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
+            @Override
+            public void onResponse(Response<MovieTrailerInfo> response) {
+                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
+                    Log.e(TAG, "key" + response.body().movieTrailers.get(0).key);
+                    playTrailer(response.body().movieTrailers.get(0).key);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        };
+        Log.e(TAG, "id" + movie.id);
+        retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
+
+
     }
 
+    /**
+     * opens the youtube application via intent
+     *
+     * @param key
+     */
+    private void playTrailer(String key) {
+        if (key != null) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + key));
+            startActivity(intent);
+        }
+    }
+
+    /**
+     * get comments of movie having specific id from web
+     */
     private void getCommentsFromWeb() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.themoviedb.org/")
-                .client(new OkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        IMovieService iMovieService = retrofit.create(IMovieService.class);
-
-        Call<MovieComments> movieCommentsCall = iMovieService.getComments(movie.id, Constants.API_KEY);
-        movieCommentsCall.enqueue(new retrofit.Callback<MovieComments>() {
+        retrofit.Callback<MovieComments> callback = new retrofit.Callback<MovieComments>() {
             @Override
             public void onResponse(Response<MovieComments> response) {
-                Log.e(TAG, "success" + response.body().toString());
-                Log.e(TAG, "value" + response.body().movieCommentList.get(0).content);
-
-                List<MovieComment> comments = response.body().movieCommentList;
-                showMovieComments(comments);
+                if (response.isSuccess()) {
+                    List<MovieComment> comments = response.body().movieCommentList;
+                    if (response.body().movieCommentList.size() > 0) {
+                        showMovieComments(comments);
+                    }
+                }
             }
 
             @Override
             public void onFailure(Throwable t) {
                 Log.e(TAG, "failure failed" + t.getMessage());
             }
-        });
+        };
+        retrofitManager.getComments(movie.id, Constants.API_KEY, callback);
     }
 
+    /**
+     * shows the comments on the view
+     *
+     * @param response
+     */
     private void showMovieComments(List<MovieComment> response) {
-       /* if (response != null) {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-            rvComments.setLayoutManager(linearLayoutManager);
-            rvComments.setAdapter(new MovieCommentAdapter(response));
-        }*/
 
-        if(response!=null) {
-            View view = LayoutInflater.from(this).inflate(R.layout.layout_movie_comments, null);
+        tvCommentTitle.setVisibility(View.VISIBLE);
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        for (MovieComment comment : response) {
+
+            View view = layoutInflater.inflate(R.layout.layout_movie_comments, llComments, false);
             TextView tvCommenterName = ButterKnife.findById(view, R.id.tv_commenter_name);
             TextView tvComment = ButterKnife.findById(view, R.id.tv_comment);
-            for (MovieComment comment : response) {
-                tvComment.setText(comment.content);
-                tvCommenterName.setText(comment.author);
-                llComments.addView(view);
-            }
+
+            tvComment.setText(comment.content);
+            tvCommenterName.setText(comment.author);
+
+            llComments.addView(view);
         }
+
 
     }
 

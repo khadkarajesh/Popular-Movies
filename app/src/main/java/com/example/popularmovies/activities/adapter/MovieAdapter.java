@@ -6,11 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.popularmovies.R;
-import com.example.popularmovies.activities.model.Movie;
+import com.example.popularmovies.activities.rest.model.Movie;
 import com.example.popularmovies.activities.widget.SingleMovieItem;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,9 +20,9 @@ import butterknife.ButterKnife;
  */
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieHolder> {
 
-    ArrayList<Movie> movieArrayList;
+    List<Movie> movieArrayList;
 
-    public MovieAdapter(ArrayList<Movie> movieArrayList) {
+    public MovieAdapter(List<Movie> movieArrayList) {
         this.movieArrayList = movieArrayList;
     }
 

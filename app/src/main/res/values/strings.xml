@@ -4,9 +4,16 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_movie_detail">MovieDetailActivity</string>
     <string name="title_activity_test_activities">TestActivities</string>
     <string name="movie_comment">One of the most interesting movies to watch. Humor, action and adventure well plotted into this great movie. The action is just great</string>
+
+    <string name="transition_string">transition</string>
+    <string name="settings_title">Settings</string>
+
+    <string name="movies_categories_key">categoriesKey</string>
+    <string name="default_movies_categories">popular</string>
+
 </resources>
