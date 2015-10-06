@@ -1,9 +1,16 @@
 # Popular-Movies
 
-Android application which  shows information about the movies by two categories with the movies title,releasing date,rating ,trailer and comments. It uses the api provided by the [themoviedb](http://api.themoviedb.org). 
+Android application which shows information about the movies. It contains title, releasing date, rating, trailer and comments about movies. It uses the api provided by the [themoviedb](http://api.themoviedb.org). Movies can be seen by following two categories.
 
 1.  Most popular
-2.  Top reated
+2.  Top Rated
+
+### ScreenShots
+
+![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscreen_shot_one%20.png)
+![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscree_shot_detail.png)
+![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscreen_shot_settins_one.png)
+![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscreen_shot_settins.png)
 
 
 ### How to use this application?
