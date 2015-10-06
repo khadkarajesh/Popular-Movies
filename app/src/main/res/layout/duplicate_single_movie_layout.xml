@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        card_view:cardCornerRadius="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.joooonho.SelectableRoundedImageView
+                android:id="@+id/img_movie_poster"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/abc"
+                android:transitionName="@string/transition_string"
+                app:sriv_left_bottom_corner_radius="0dip"
+                app:sriv_left_top_corner_radius="4dip"
+                app:sriv_right_bottom_corner_radius="0dp"
+                app:sriv_right_top_corner_radius="4dip" />
+
+            <TextView
+                android:id="@+id/tv_movie_title"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:text="This is film" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
