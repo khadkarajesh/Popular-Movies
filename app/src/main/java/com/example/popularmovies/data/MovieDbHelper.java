@@ -41,7 +41,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                         + MovieCommentEntry.COLUMN_MOVIE_COMMENT + " TEXT NOT NULL,"
                         + MovieCommentEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL,"
                         + " FOREIGN KEY (" + MovieCommentEntry.COLUMN_MOVIE_ID + ")"
-                        + " REFERENCES " + MovieEntry.TABLE_NAME + "(" + MovieEntry._ID + ")"
+                        + " REFERENCES " + MovieEntry.TABLE_NAME + "(" + MovieEntry.COLUMN_MOVIE_ID + ")"
                         + " );";
 
         db.execSQL(SQL_CREATE_MOVIE_TABLE);

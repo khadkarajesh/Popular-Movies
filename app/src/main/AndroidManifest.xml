@@ -27,6 +27,10 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/settings_title" />
+
+        <provider
+            android:name=".data.MovieDbProvider"
+            android:authorities="@string/content_authority" />
     </application>
 
 </manifest>

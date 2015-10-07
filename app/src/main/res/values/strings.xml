@@ -16,4 +16,6 @@
     <string name="movies_categories_key">categoriesKey</string>
     <string name="default_movies_categories">popular</string>
 
+    <string name="content_authority">com.example.popularmovies</string>
+
 </resources>

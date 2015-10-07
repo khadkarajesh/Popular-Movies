@@ -1,6 +1,7 @@
 package com.example.popularmovies.data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -47,6 +48,10 @@ public class MoviesContract {
 
         // column for storing the movie synopsis
         public static final String COLUMN_MOVIE_OVERVIEW = "movie_overview";
+
+        public static Uri buildMovieUri(long movieId) {
+            return ContentUris.withAppendedId(CONTENT_URI, movieId);
+        }
     }
 
 
@@ -68,6 +73,10 @@ public class MoviesContract {
         public static final String COLUMN_MOVIE_COMMENT = "comment";
         //column with the foreign key into the movies table.
         public static final String COLUMN_MOVIE_ID = "movie_id";
+
+        public static Uri buildCommentUri(long movieId) {
+            return ContentUris.withAppendedId(CONTENT_URI, movieId);
+        }
 
 
     }
