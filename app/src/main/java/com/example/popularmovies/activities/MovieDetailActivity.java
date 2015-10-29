@@ -37,6 +37,7 @@ import com.example.popularmovies.util.Utility;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -120,6 +121,7 @@ public class MovieDetailActivity extends BaseActivity {
         //register the retrofit for network call
         retrofitManager = RetrofitManager.getInstance();
 
+
         setData();
 
         getPalette();
@@ -158,7 +160,27 @@ public class MovieDetailActivity extends BaseActivity {
         ratingBar.setRating(movie.voteAverage);
         overView.setText(movie.overview);
 
-        getCommentsFromWeb();
+        String movieId = Integer.toString(movie.id);
+
+
+        String categories = Utility.getMovieCategories(this);
+        if (categories.equals(getString(R.string.favourite_categories_value))) {
+            Cursor cursor = getContentResolver().query(MoviesContract.MovieCommentEntry.buildCommentUri(movie.id), null, null, new String[]{movieId}, null);
+            MovieComment movieComment;
+            if (cursor.getCount() > 0) {
+                comments = new ArrayList<>();
+                while (cursor.moveToNext()) {
+                    movieComment = new MovieComment();
+                    movieComment.author = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieCommentEntry.COLUMN_AUTHOR_NAME));
+                    movieComment.content = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_COMMENT));
+
+                    comments.add(movieComment);
+                }
+                showMovieComments(comments);
+            }
+        } else {
+            getCommentsFromWeb();
+        }
     }
 
     @Override
@@ -205,25 +227,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-
-       /* Callback<MovieTrailerInfo> movieTrailerInfoCallback = new Callback<MovieTrailerInfo>() {
-            @Override
-            public void onResponse(Response<MovieTrailerInfo> response) {
-                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
-                    Log.e(TAG, "key" + response.body().movieTrailers.get(0).key);
-                    playTrailer(response.body().movieTrailers.get(0).key);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        };
-        Log.e(TAG, "id" + movie.id);
-        retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);*/
-
-        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback=new retrofit.Callback<MovieTrailerInfo>() {
+        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
             @Override
             public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
                 if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
@@ -307,7 +311,7 @@ public class MovieDetailActivity extends BaseActivity {
      */
     private void getCommentsFromWeb() {
 
-        retrofit.Callback<MovieComments> callback=new retrofit.Callback<MovieComments>() {
+        retrofit.Callback<MovieComments> callback = new retrofit.Callback<MovieComments>() {
             @Override
             public void onResponse(Response<MovieComments> response, Retrofit retrofit) {
                 if (response.isSuccess()) {

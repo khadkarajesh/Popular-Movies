@@ -58,6 +58,8 @@ public class MovieDbProvider extends ContentProvider {
 
     public static final String updateMovieById = MovieEntry.COLUMN_MOVIE_ID + " =?";
 
+    public static final String commentByMovieId = MovieCommentEntry.COLUMN_MOVIE_ID + " =?";
+
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
@@ -70,10 +72,14 @@ public class MovieDbProvider extends ContentProvider {
                 break;
             case MOVIES_BY_MOVIE_ID:
                 cursor = getMovieId(uri, projection, selection, selectionArgs, sortOrder);
-                Log.e(TAG, "cursor size" + cursor.getCount());
+
                 break;
             case MOVIES_WITH_COMMENT:
                 cursor = getMoviesDetailWithComment(uri, projection, selection, selectionArgs, sortOrder);
+                break;
+            case MOVIES_COMMENT_BY_MOVIE_ID:
+                cursor = sqLiteDatabase.query(MovieCommentEntry.TABLE_NAME, null, commentByMovieId, selectionArgs, null, null, null);
+                Log.e(TAG, "cursor size" + cursor.getCount());
                 break;
         }
         return cursor;

@@ -1,9 +1,7 @@
 package com.example.popularmovies.fragment;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -18,6 +16,7 @@ import com.example.popularmovies.fragment.base.BaseFragment;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
 import com.example.popularmovies.rest.model.MoviesInfo;
+import com.example.popularmovies.util.Utility;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -121,17 +120,6 @@ public class MovieDuplicateFragment extends BaseFragment {
     }
 
 
-    /**
-     * get movie categories that is stored in the default sharedPreferences
-     *
-     * @return returns the movie categories{i-e popular/top_rated}
-     */
-    private String getMovieCategories() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String movieCategories = sharedPreferences.getString(getString(R.string.movies_categories_key), getString(R.string.default_movies_categories));
-        return movieCategories;
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(MOVIE_DATA, movieArrayList);
@@ -140,7 +128,7 @@ public class MovieDuplicateFragment extends BaseFragment {
     }
 
     private void fetchData() {
-        String categories = getMovieCategories();
+        String categories = Utility.getMovieCategories(getActivity());
         if (categories.equals(getString(R.string.favourite_categories_value))) {
             Cursor cursor = getActivity().getContentResolver().query(MoviesContract.MovieEntry.CONTENT_URI, null, null, null, null);
 

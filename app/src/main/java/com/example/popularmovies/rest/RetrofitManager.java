@@ -5,6 +5,7 @@ import com.example.popularmovies.rest.model.MovieComments;
 import com.example.popularmovies.rest.model.MovieTrailerInfo;
 import com.example.popularmovies.rest.model.MoviesInfo;
 import com.example.popularmovies.rest.service.IMovieService;
+import com.squareup.okhttp.OkHttpClient;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -24,6 +25,7 @@ public class RetrofitManager {
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.MOVIE_BASE_URL)
+                .client(new OkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
