@@ -7,26 +7,21 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.adapter.MovieAdapter;
 import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
-import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.fragment.base.BaseFragment;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
-import com.example.popularmovies.rest.model.MoviesInfo;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import retrofit.Callback;
-import retrofit.Response;
 
 /**
  * A simple class which shows the movie poster in the grid view with movie name.
@@ -49,6 +44,8 @@ public class MovieFragment extends BaseFragment {
     private MovieAdapter movieAdapter;
     private int count = 0;
 
+    Movie movie;
+
     public MovieFragment() {
         // Required empty public constructor
     }
@@ -70,6 +67,7 @@ public class MovieFragment extends BaseFragment {
         EventBus.register(this);
 
         movieArrayList = new ArrayList<>();
+        movie=new Movie();
     }
 
     @Override
@@ -91,7 +89,7 @@ public class MovieFragment extends BaseFragment {
      * @param moviesCategories movie categories{popular, top_rated}
      */
     private void fetchMoviesFromWeb(int pageNumber, String moviesCategories) {
-        Callback<MoviesInfo> moviesInfoCallback = new Callback<MoviesInfo>() {
+       /* Callback<MoviesInfo> moviesInfoCallback = new Callback<MoviesInfo>() {
             @Override
             public void onResponse(Response<MoviesInfo> response) {
 
@@ -109,7 +107,16 @@ public class MovieFragment extends BaseFragment {
                 Log.e(TAG, "error" + t.getMessage());
             }
         };
-        retrofitManager.getMoviesInfo(moviesCategories, pageNumber, Constants.API_KEY, moviesInfoCallback);
+        retrofitManager.getMoviesInfo(moviesCategories, pageNumber, Constants.API_KEY, moviesInfoCallback);*/
+
+
+        movieArrayList=movie.getMovies(moviesCategories,pageNumber);
+        if (count == 0) {
+
+            setRecyclerView(movieArrayList);
+            count++;
+        }
+
     }
 
 
@@ -162,4 +169,8 @@ public class MovieFragment extends BaseFragment {
         //un-register the event bus
         EventBus.unregister(this);
     }
+
+
+
+
 }

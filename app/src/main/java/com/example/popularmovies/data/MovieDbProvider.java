@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.example.popularmovies.data.MoviesContract.MovieEntry;
 import com.example.popularmovies.data.MoviesContract.MovieCommentEntry;
@@ -24,6 +25,7 @@ public class MovieDbProvider extends ContentProvider {
     public static final int COMMENTS = 105;
 
     private static final UriMatcher uriMatcher = buildUriMatcher();
+    private static final String TAG = MovieDbProvider.class.getSimpleName();
 
     private MovieDbHelper movieDbHelper = null;
 
@@ -43,7 +45,7 @@ public class MovieDbProvider extends ContentProvider {
                 + " ON "
                 + MovieEntry.TABLE_NAME
                 + "."
-                + MovieEntry.COLUMN_MOVIE_ID
+                + MovieEntry._ID
                 + " = "
                 + MovieCommentEntry.TABLE_NAME
                 + "."
@@ -52,18 +54,23 @@ public class MovieDbProvider extends ContentProvider {
     }
 
     //movie.movie_id=?
-    private static final String movieByMoviesId = MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_MOVIE_ID + "?";
+    private static final String movieByMoviesId = MovieEntry.COLUMN_MOVIE_ID + " =?";
+
+    public static final String updateMovieById = MovieEntry.COLUMN_MOVIE_ID + " =?";
 
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 
+        sqLiteDatabase = movieDbHelper.getReadableDatabase();
         Cursor cursor = null;
         switch (uriMatcher.match(uri)) {
             case MOVIES:
+                cursor = sqLiteDatabase.query(MovieEntry.TABLE_NAME, null, null, null, null, null, null);
                 break;
             case MOVIES_BY_MOVIE_ID:
-                cursor = getMovieByMovieId(uri, projection, selection, selectionArgs, sortOrder);
+                cursor = getMovieId(uri, projection, selection, selectionArgs, sortOrder);
+                Log.e(TAG, "cursor size" + cursor.getCount());
                 break;
             case MOVIES_WITH_COMMENT:
                 cursor = getMoviesDetailWithComment(uri, projection, selection, selectionArgs, sortOrder);
@@ -78,9 +85,9 @@ public class MovieDbProvider extends ContentProvider {
         return cursor;
     }
 
-    private Cursor getMovieByMovieId(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    private Cursor getMovieId(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         sqLiteDatabase = movieDbHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(MovieEntry.TABLE_NAME, new String[]{MovieEntry.COLUMN_MOVIE_ID}, movieByMoviesId, selectionArgs, null, null, null);
+        Cursor cursor = sqLiteDatabase.query(MovieEntry.TABLE_NAME, null, movieByMoviesId, new String[]{Long.toString(MovieEntry.getMovieIdFromUri(uri))}, null, null, null);
         return cursor;
     }
 
@@ -113,15 +120,16 @@ public class MovieDbProvider extends ContentProvider {
                 if (_id > 0) {
                     returnUri = MovieEntry.buildMovieUri(_id);
                 } else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException("Failed to insert row into " + returnUri);
                 break;
             }
             case COMMENTS: {
                 long _id = sqLiteDatabase.insert(MovieCommentEntry.TABLE_NAME, null, values);
+
                 if (_id > 0) {
                     returnUri = MovieCommentEntry.buildCommentUri(_id);
                 } else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException("Failed to insert row into " + returnUri);
                 break;
             }
         }
@@ -140,10 +148,16 @@ public class MovieDbProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case MOVIES:
                 rowsDeleted = sqLiteDatabase.delete(MovieEntry.TABLE_NAME, selection, selectionArgs);
+                Log.e(TAG, "delted id" + rowsDeleted);
                 break;
             case COMMENTS:
                 rowsDeleted = sqLiteDatabase.delete(MovieCommentEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+            case MOVIES_BY_MOVIE_ID:
+                long movieId = MovieEntry.getMovieIdFromUri(uri);
+                rowsDeleted = sqLiteDatabase.delete(MovieEntry.TABLE_NAME, updateMovieById, new String[]{Long.toString(movieId)});
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

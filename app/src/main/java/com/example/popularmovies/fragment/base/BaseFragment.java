@@ -20,7 +20,6 @@ public abstract class BaseFragment extends Fragment {
         ButterKnife.bind(this, view);
         return view;
     }
-
     protected abstract int getLayout();
 
 }

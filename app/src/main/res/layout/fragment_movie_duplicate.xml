@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:columnWidth="130dp"
-    android:horizontalSpacing="10dp"
+    android:horizontalSpacing="5dp"
     android:numColumns="auto_fit"
     android:stretchMode="columnWidth"
-    android:verticalSpacing="10dp"></GridView>
+    android:verticalSpacing="5dp"></GridView>

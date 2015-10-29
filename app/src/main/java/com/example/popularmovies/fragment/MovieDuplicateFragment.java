@@ -1,35 +1,39 @@
 package com.example.popularmovies.fragment;
 
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.adapter.DuplicateMovieAdapter;
 import com.example.popularmovies.bus.EventBus;
+import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.Constants;
+import com.example.popularmovies.data.MoviesContract;
 import com.example.popularmovies.fragment.base.BaseFragment;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
 import com.example.popularmovies.rest.model.MoviesInfo;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.OnItemSelected;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 
 public class MovieDuplicateFragment extends BaseFragment {
 
 
-    private List<Movie> movieArrayList;
+    private ArrayList<Movie> movieArrayList;
+    private final String MOVIE_DATA = "movie_data";
 
     private int count = 0;
 
@@ -38,6 +42,8 @@ public class MovieDuplicateFragment extends BaseFragment {
 
     @Bind(R.id.gridView1)
     GridView gridView;
+
+    DuplicateMovieAdapter duplicateMovieAdapter;
 
     public MovieDuplicateFragment() {
         // Required empty public constructor
@@ -56,8 +62,24 @@ public class MovieDuplicateFragment extends BaseFragment {
 
         movieArrayList = new ArrayList<>();
 
-        fetchMoviesFromWeb(1, getMovieCategories());
+
+        gridView.setDrawSelectorOnTop(true);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                EventBus.post(new PopularMoviesEvent.MoviePosterSelectionEvent(movieArrayList.get(position)));
+            }
+        });
+
     }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        fetchData();
+    }
+
 
     @Override
     protected int getLayout() {
@@ -73,46 +95,31 @@ public class MovieDuplicateFragment extends BaseFragment {
     private void fetchMoviesFromWeb(int pageNumber, String moviesCategories) {
         Callback<MoviesInfo> moviesInfoCallback = new Callback<MoviesInfo>() {
             @Override
-            public void onResponse(Response<MoviesInfo> response) {
-
+            public void onResponse(Response<MoviesInfo> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     movieArrayList.addAll(response.body().movieList);
                     if (count == 0) {
-                        setRecyclerView(movieArrayList);
+                        setGridView(movieArrayList);
                         count++;
+                    } else {
+                        duplicateMovieAdapter.notifyDataSetChanged();
                     }
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.e(TAG, "error" + t.getMessage());
+
             }
         };
         retrofitManager.getMoviesInfo(moviesCategories, pageNumber, Constants.API_KEY, moviesInfoCallback);
     }
 
-    private void setRecyclerView(List<Movie> movieArrayList) {
-        gridView.setAdapter(new DuplicateMovieAdapter(getActivity(), movieArrayList));
-       /* gridView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(),"called"+position,Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
-
+    private void setGridView(final List<Movie> movieArrayList) {
+        duplicateMovieAdapter = new DuplicateMovieAdapter(getActivity(), movieArrayList);
+        gridView.setAdapter(duplicateMovieAdapter);
     }
 
-    @OnItemSelected(R.id.gridView1)
-    public void onItemClick()
-    {
-        Toast.makeText(getActivity(),"called",Toast.LENGTH_SHORT).show();
-    }
 
     /**
      * get movie categories that is stored in the default sharedPreferences
@@ -125,5 +132,55 @@ public class MovieDuplicateFragment extends BaseFragment {
         return movieCategories;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(MOVIE_DATA, movieArrayList);
+        super.onSaveInstanceState(outState);
+
+    }
+
+    private void fetchData() {
+        String categories = getMovieCategories();
+        if (categories.equals(getString(R.string.favourite_categories_value))) {
+            Cursor cursor = getActivity().getContentResolver().query(MoviesContract.MovieEntry.CONTENT_URI, null, null, null, null);
+
+            movieArrayList.clear();
+            Movie movie;
+            while (cursor.moveToNext()) {
+                movie = new Movie();
+                movie.id = cursor.getInt(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_MOVIE_ID));
+                movie.overview = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_MOVIE_OVERVIEW));
+                movie.voteAverage = cursor.getFloat(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_MOVIE_RATING));
+                movie.posterPath = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH));
+                movie.title = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_MOVIE_TITLE));
+                movie.releaseDate = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE));
+                movieArrayList.add(movie);
+            }
+            setGridView(movieArrayList);
+
+            // Log.e(TAG, "moviesWithComment" + cursor.getCount());
+
+        } else {
+            fetchMoviesFromWeb(1, categories);
+        }
+    }
+
+
+    /**
+     * handle the event of movie categories change and loads the UI with updated data
+     * by making the network call according to categories.
+     *
+     * @param event
+     */
+    @Subscribe
+    public void handlePreferenceChangeEvent(PopularMoviesEvent.PreferenceChangeEvent event) {
+        if (event != null) {
+            movieArrayList.clear();
+            fetchData();
+            if (movieArrayList.size() > 0) {
+                duplicateMovieAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 
 }

@@ -1,7 +1,10 @@
 package com.example.popularmovies.activities;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.base.BaseActivity;
 import com.example.popularmovies.data.Constants;
+import com.example.popularmovies.data.MoviesContract;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
 import com.example.popularmovies.rest.model.MovieComment;
@@ -39,7 +43,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Response;
-
+import retrofit.Retrofit;
 
 
 /**
@@ -88,6 +92,10 @@ public class MovieDetailActivity extends BaseActivity {
     Movie movie;
     RetrofitManager retrofitManager = null;
 
+    List<MovieComment> comments;
+
+    ColorStateList colorList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +122,12 @@ public class MovieDetailActivity extends BaseActivity {
 
         setData();
 
+        getPalette();
+
+    }
+
+
+    private void getPalette() {
 
         Picasso.with(this).load(Utility.getImageUri(movie.posterPath)).into(moviePoster, new Callback() {
             @Override
@@ -131,7 +145,6 @@ public class MovieDetailActivity extends BaseActivity {
 
             }
         });
-
     }
 
     /**
@@ -186,13 +199,14 @@ public class MovieDetailActivity extends BaseActivity {
         int vibrantColor = palette.getVibrantColor(ContextCompat.getColor(this, R.color.accent));
 
         fab.setRippleColor(lightVibrantColor);
-        fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
+        colorList = ColorStateList.valueOf(vibrantColor);
+        fab.setBackgroundTintList(colorList);
     }
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
 
-        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
+       /* Callback<MovieTrailerInfo> movieTrailerInfoCallback = new Callback<MovieTrailerInfo>() {
             @Override
             public void onResponse(Response<MovieTrailerInfo> response) {
                 if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
@@ -207,7 +221,71 @@ public class MovieDetailActivity extends BaseActivity {
             }
         };
         Log.e(TAG, "id" + movie.id);
+        retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);*/
+
+        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback=new retrofit.Callback<MovieTrailerInfo>() {
+            @Override
+            public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
+                    Log.e(TAG, "key" + response.body().movieTrailers.get(0).key);
+                    playTrailer(response.body().movieTrailers.get(0).key);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        };
         retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
+
+
+    }
+
+    @OnClick({R.id.fab})
+    public void addFavourite(View view) {
+
+        ContentResolver contentResolver = getContentResolver();
+
+        String movieId = Long.toString(movie.id);
+        Cursor cursor = contentResolver.query(MoviesContract.MovieEntry.buildMovieUri(movie.id), null, null, null, null, null);
+        Log.e(TAG, "movie id" + MoviesContract.MovieEntry.buildMovieUri(movie.id) + " size:" + cursor.getCount());
+
+        if (cursor.getCount() == 0) {
+
+            Log.e(TAG, "favourite");
+
+            //for inserting the movie description to the movie table
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_ID, movie.id);
+            contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.title);
+            contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE, movie.releaseDate);
+            contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH, movie.posterPath);
+            contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_RATING, movie.voteAverage);
+            contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.overview);
+
+            getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, contentValues);
+
+
+            ContentValues cv = null;
+            //for inserting the comment of respective movie in comments table.
+            if (comments != null) {
+                for (MovieComment movieComment : comments) {
+                    cv = new ContentValues();
+                    cv.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_ID, movie.id);
+                    cv.put(MoviesContract.MovieCommentEntry.COLUMN_AUTHOR_NAME, movieComment.author);
+                    cv.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_COMMENT, movieComment.content);
+                    getContentResolver().insert(MoviesContract.MovieCommentEntry.CONTENT_URI, cv);
+                }
+
+                //Log.e(TAG, "uri" + contentResolver.insert(MoviesContract.MovieCommentEntry.CONTENT_URI, contentValues));
+            }
+            // Log.e(TAG, "movieUri" + contentResolver.insert(MoviesContract.MovieEntry.CONTENT_URI, contentValues));
+        } else {
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_unfav));
+            int id = getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(movie.id), null, null);
+            Log.e(TAG, "notfav" + id);
+        }
 
 
     }
@@ -228,11 +306,12 @@ public class MovieDetailActivity extends BaseActivity {
      * get comments of movie having specific id from web
      */
     private void getCommentsFromWeb() {
-        retrofit.Callback<MovieComments> callback = new retrofit.Callback<MovieComments>() {
+
+        retrofit.Callback<MovieComments> callback=new retrofit.Callback<MovieComments>() {
             @Override
-            public void onResponse(Response<MovieComments> response) {
+            public void onResponse(Response<MovieComments> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
-                    List<MovieComment> comments = response.body().movieCommentList;
+                    comments = response.body().movieCommentList;
                     if (response.body().movieCommentList.size() > 0) {
                         showMovieComments(comments);
                     }
@@ -241,7 +320,7 @@ public class MovieDetailActivity extends BaseActivity {
 
             @Override
             public void onFailure(Throwable t) {
-                Log.e(TAG, "failure failed" + t.getMessage());
+
             }
         };
         retrofitManager.getComments(movie.id, Constants.API_KEY, callback);

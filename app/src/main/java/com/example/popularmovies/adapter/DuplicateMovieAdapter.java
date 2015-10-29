@@ -6,19 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.rest.model.Movie;
-import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
 
 /**
  * Created by rajesh on 10/4/15.
@@ -57,7 +55,7 @@ public class DuplicateMovieAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Movie movie = movieArrayList.get(position);
+        final Movie movie = movieArrayList.get(position);
         ViewHolder holder;
         if (convertView != null) {
             holder = (ViewHolder) convertView.getTag();
@@ -70,8 +68,6 @@ public class DuplicateMovieAdapter extends BaseAdapter {
         holder.tvMovieTitle.setText(movie.title);
         Picasso.with(mContext).load(getImageUri(movie.posterPath)).placeholder(R.drawable.abc).into(holder.imgPoster);
 
-        holder.cardView.setPreventCornerOverlap(false);
-
         return convertView;
     }
 
@@ -80,7 +76,7 @@ public class DuplicateMovieAdapter extends BaseAdapter {
         TextView tvMovieTitle;
 
         @Bind(R.id.img_movie_poster)
-        SelectableRoundedImageView imgPoster;
+        ImageView imgPoster;
 
         @Bind(R.id.card_view)
         CardView cardView;
@@ -89,11 +85,6 @@ public class DuplicateMovieAdapter extends BaseAdapter {
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
-    }
-
-    @OnItemClick(R.id.img_movie_poster)
-    public void onItemSelected(View view, int position) {
-        Toast.makeText(mContext, "item clicked at postion" + position, Toast.LENGTH_SHORT).show();
     }
 
     public String getImageUri(String uri) {

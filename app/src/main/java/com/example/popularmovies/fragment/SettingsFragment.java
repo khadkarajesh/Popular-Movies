@@ -6,11 +6,11 @@ import android.preference.PreferenceManager;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.util.Log;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
-
 
 
 /**
@@ -30,9 +30,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         EventBus.register(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-
         onSharedPreferenceChanged(sharedPreferences, getString(R.string.movies_categories_key));
+
     }
 
 
@@ -52,14 +51,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             int prefIndex = listPreference.findIndexOfValue(sharedPreferences.getString(key, ""));
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
+                //post the event of movie categories changed
+                EventBus.post(new PopularMoviesEvent.PreferenceChangeEvent());
             }
         } else {
             preference.setSummary(sharedPreferences.getString(key, ""));
 
         }
 
-        //post the event of movie categories changed
-        EventBus.post(new PopularMoviesEvent.PreferenceChangeEvent());
+
     }
 
     @Override

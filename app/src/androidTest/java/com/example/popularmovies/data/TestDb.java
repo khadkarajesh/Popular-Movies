@@ -99,7 +99,7 @@ public class TestDb extends AndroidTestCase {
         sqLiteDatabase = movieDbHelper.getWritableDatabase();
 
 
-        ContentValues contentValue = TestUtilities.createMovieData();
+        ContentValues contentValue = TestUtilities.createMovieData(123);
 
         long recordId = sqLiteDatabase.insert(MovieEntry.TABLE_NAME, null, contentValue);
 
@@ -123,7 +123,7 @@ public class TestDb extends AndroidTestCase {
 
         sqLiteDatabase = movieDbHelper.getWritableDatabase();
 
-        ContentValues contentValue = TestUtilities.createMovieComments();
+        ContentValues contentValue = TestUtilities.createMovieComments(1);
 
         long recordId = sqLiteDatabase.insert(MovieCommentEntry.TABLE_NAME, null, contentValue);
 

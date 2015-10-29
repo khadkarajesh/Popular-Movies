@@ -9,9 +9,9 @@ import com.example.popularmovies.data.MoviesContract;
  */
 public class TestUtilities {
 
-    public static ContentValues createMovieData() {
+    public static ContentValues createMovieData(int movieId) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_ID, "32943");
+        contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
         contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_TITLE, "Bagmati");
         contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE, "2015-10-20");
         contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_RATING, 7.8);
@@ -19,10 +19,22 @@ public class TestUtilities {
         return contentValues;
     }
 
-    public static ContentValues createMovieComments() {
+    public static ContentValues createMovieComments(long movieId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_COMMENT, "this movie is asesome movie");
-        contentValues.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_ID, 1);
+        contentValues.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_ID, movieId);
         return contentValues;
     }
+
+    public static ContentValues createUpdatedMovieData(int movieId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_ID, movieId);
+        contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_TITLE, "BisnuMati");
+        contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE, "2015-10-20");
+        contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_RATING, 7.8);
+        contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, " this is the action movie");
+        return contentValues;
+    }
+
+
 }

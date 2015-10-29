@@ -49,8 +49,14 @@ public class MoviesContract {
         // column for storing the movie synopsis
         public static final String COLUMN_MOVIE_OVERVIEW = "movie_overview";
 
+        public static final String COLUMN_MOVIE_POSTER_PATH="poster_path";
+
         public static Uri buildMovieUri(long movieId) {
             return ContentUris.withAppendedId(CONTENT_URI, movieId);
+        }
+
+        public static Long getMovieIdFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 
@@ -73,9 +79,15 @@ public class MoviesContract {
         public static final String COLUMN_MOVIE_COMMENT = "comment";
         //column with the foreign key into the movies table.
         public static final String COLUMN_MOVIE_ID = "movie_id";
+        //name of movie commenter
+        public static final String COLUMN_AUTHOR_NAME = "author";
 
         public static Uri buildCommentUri(long movieId) {
             return ContentUris.withAppendedId(CONTENT_URI, movieId);
+        }
+
+        public static String getInsertedCommentId(Uri uri) {
+            return uri.getPathSegments().get(1);
         }
 
 

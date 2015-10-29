@@ -3,12 +3,17 @@ package com.example.popularmovies.rest.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.popularmovies.rest.RetrofitManager;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
  * Created by rajesh on 9/19/15.
  */
 public class Movie implements Parcelable {
+
+    private static final String TAG = Movie.class.getSimpleName();
     @SerializedName("id")
     public int id;
 
@@ -33,18 +38,35 @@ public class Movie implements Parcelable {
     @SerializedName("vote_count")
     public int voteCount;
 
+    private List<Movie> movieArrayList;
+    private RetrofitManager retrofitManager;
 
-    public Movie(int id, String overview, String releaseDate, String posterPath, long popularity, String title, long voteAverage, int voteCount) {
-
-        this.id = id;
-        this.overview = overview;
-        this.releaseDate = releaseDate;
-        this.posterPath = posterPath;
-        this.popularity = popularity;
-        this.title = title;
-        this.voteAverage = voteAverage;
-        this.voteCount = voteCount;
+    public Movie() {
+        retrofitManager = RetrofitManager.getInstance();
     }
+
+    protected Movie(Parcel in) {
+        id = in.readInt();
+        overview = in.readString();
+        releaseDate = in.readString();
+        posterPath = in.readString();
+        popularity = in.readFloat();
+        title = in.readString();
+        voteAverage = in.readFloat();
+        voteCount = in.readInt();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     @Override
     public int describeContents() {
@@ -53,7 +75,6 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
         dest.writeInt(id);
         dest.writeString(overview);
         dest.writeString(releaseDate);
@@ -64,31 +85,22 @@ public class Movie implements Parcelable {
         dest.writeInt(voteCount);
     }
 
-    public Movie(Parcel parcel) {
-        this.id = parcel.readInt();
-        this.overview = parcel.readString();
-        this.releaseDate = parcel.readString();
-        this.posterPath = parcel.readString();
-        this.popularity = parcel.readFloat();
-        this.title = parcel.readString();
-        this.voteAverage = parcel.readFloat();
-        this.voteCount = parcel.readInt();
+    public List<Movie> getMovies(String moviesCategories, int pageNumber) {
+        /*Callback<MoviesInfo> moviesInfoCallback = new Callback<MoviesInfo>() {
+            @Override
+            public void onResponse(Response<MoviesInfo> response) {
 
+                if (response.isSuccess()) {
+                    movieArrayList.addAll(response.body().movieList);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(TAG, "error" + t.getMessage());
+            }
+        };
+        retrofitManager.getMoviesInfo(moviesCategories, pageNumber, Constants.API_KEY, moviesInfoCallback);*/
+        return movieArrayList;
     }
-
-
-    public static Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
-
-        @Override
-        public Movie createFromParcel(Parcel source) {
-            return new Movie(source);
-        }
-
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
-
-
 }

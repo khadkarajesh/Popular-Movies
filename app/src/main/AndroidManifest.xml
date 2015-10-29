@@ -20,6 +20,7 @@
         </activity>
         <activity
             android:name=".activities.MovieDetailActivity"
+            android:launchMode="singleInstance"
             android:label="@string/title_activity_movie_detail"></activity>
         <activity
             android:name=".activities.TestActivity"
@@ -30,7 +31,9 @@
 
         <provider
             android:name=".data.MovieDbProvider"
-            android:authorities="@string/content_authority" />
+            android:authorities="@string/content_authority"
+            android:exported="true"
+            android:syncable="true" />
     </application>
 
 </manifest>

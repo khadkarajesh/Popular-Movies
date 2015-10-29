@@ -1,16 +1,12 @@
 package com.example.popularmovies.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.base.BaseActivity;
-import com.example.popularmovies.fragment.MovieDuplicateFragment;
-
-import butterknife.Bind;
+import com.example.popularmovies.fragment.MovieDetailFragment;
+import com.example.popularmovies.rest.model.Movie;
 
 /**
  * this activity is kept intentionally  for checking different view.
@@ -18,35 +14,36 @@ import butterknife.Bind;
 public class TestActivity extends BaseActivity {
 
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
+
+    Movie movie;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         super.onCreate(savedInstanceState);
+        //for making status bar transulent
 
-
-
-        //set toolbar.
-        setSupportActionBar(toolbar);
+        //get the single movie data passed form intent
+        movie = getIntent().getParcelableExtra(MovieDetailActivity.MOVIE_OBJECT);
 
         // loads the fragment MovieFragment
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.detailContainer, new MovieDuplicateFragment())
+                    .replace(R.id.detailContainer,MovieDetailFragment.newInstance(movie,"tablet"))
                     .commit();
         }
 
 
     }
 
+
     @Override
     protected int getLayout() {
         return R.layout.activity_test_activities;
     }
 
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_test_activities, menu);
@@ -66,5 +63,5 @@ public class TestActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }
