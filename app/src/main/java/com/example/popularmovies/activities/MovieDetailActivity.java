@@ -11,10 +11,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,9 +58,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     public static final String MOVIE_OBJECT = "data";
 
-
-    @Bind(R.id.iv_play_movie)
-    ImageView ivPlayMovie;
+    private Boolean favourite = false;
 
     @Bind(R.id.img_movie_poster)
     ImageView moviePoster;
@@ -98,6 +96,8 @@ public class MovieDetailActivity extends BaseActivity {
     List<MovieComment> comments;
 
     ColorStateList colorList;
+
+    String trailerKey;
 
 
     @Override
@@ -161,6 +161,15 @@ public class MovieDetailActivity extends BaseActivity {
         movieTitle.setText(movie.title);
         ratingBar.setRating(movie.voteAverage);
         overView.setText(movie.overview);
+        releasingDate.setText(movie.releaseDate);
+
+        ContentResolver contentResolver = getContentResolver();
+        Cursor movieCursor = contentResolver.query(MoviesContract.MovieEntry.buildMovieUri(movie.id), null, null, null, null, null);
+
+        if (movieCursor.getCount() > 0) {
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav));
+            favourite = true;
+        }
 
         String movieId = Integer.toString(movie.id);
 
@@ -206,6 +215,10 @@ public class MovieDetailActivity extends BaseActivity {
         if (id == android.R.id.home) {
             onBackPressed();
         }
+        if (id == R.id.action_share) {
+            shareMovieTrailerUrl();
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -233,8 +246,9 @@ public class MovieDetailActivity extends BaseActivity {
             @Override
             public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
                 if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
-                    Log.e(TAG, "key" + response.body().movieTrailers.get(0).key);
+                    trailerKey = response.body().movieTrailers.get(0).key;
                     playTrailer(response.body().movieTrailers.get(0).key);
+
                 }
             }
 
@@ -244,22 +258,15 @@ public class MovieDetailActivity extends BaseActivity {
             }
         };
         retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
-
-
     }
 
     @OnClick({R.id.fab})
     public void addFavourite(View view) {
 
-        ContentResolver contentResolver = getContentResolver();
 
-        String movieId = Long.toString(movie.id);
-        Cursor cursor = contentResolver.query(MoviesContract.MovieEntry.buildMovieUri(movie.id), null, null, null, null, null);
-        Log.e(TAG, "movie id" + MoviesContract.MovieEntry.buildMovieUri(movie.id) + " size:" + cursor.getCount());
+        if (!favourite) {
 
-        if (cursor.getCount() == 0) {
-
-            Log.e(TAG, "favourite");
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav));
 
             //for inserting the movie description to the movie table
             ContentValues contentValues = new ContentValues();
@@ -284,10 +291,13 @@ public class MovieDetailActivity extends BaseActivity {
                     getContentResolver().insert(MoviesContract.MovieCommentEntry.CONTENT_URI, cv);
                 }
             }
+
+            favourite = true;
         } else {
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_unfav));
             int id = getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(movie.id), null, null);
             EventBus.post(new PopularMoviesEvent.MovieUnFavourite());
+            favourite = false;
         }
 
 
@@ -351,6 +361,16 @@ public class MovieDetailActivity extends BaseActivity {
         }
 
 
+    }
+
+
+    private void shareMovieTrailerUrl() {
+        Intent shareIntent = ShareCompat.IntentBuilder.from(this).setType("text/plain")
+                .setText(Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + trailerKey).toString())
+                .getIntent();
+        if (shareIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(shareIntent);
+        }
     }
 
 }

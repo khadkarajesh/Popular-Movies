@@ -8,11 +8,7 @@ import java.util.List;
  * Created by rajesh on 10/1/15.
  */
 public class MovieTrailerInfo {
+    private static final String TAG = MovieTrailerInfo.class.getSimpleName();
     @SerializedName("results")
     public List<MovieTrailer> movieTrailers;
-
-    public class MovieTrailer {
-        @SerializedName("key")
-        public String key;
-    }
 }

@@ -4,13 +4,12 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,6 +49,8 @@ public class MovieDetailFragment extends BaseFragment {
     private static final String MOVIE_OBJECT = "movie_object";
     private static final String TABLET = "tablet";
 
+    private Boolean favourite = false;
+
     @Bind(R.id.img_movie_poster)
     ImageView moviePoster;
 
@@ -83,7 +84,6 @@ public class MovieDetailFragment extends BaseFragment {
 
 
     private Movie mMovie;
-    private String tablet;
 
     private AppCompatActivity activity;
     private String TAG = MovieDetailFragment.class.getSimpleName();
@@ -106,10 +106,8 @@ public class MovieDetailFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         if (getArguments() != null) {
             mMovie = getArguments().getParcelable(MOVIE_OBJECT);
-            tablet = getArguments().getString(TABLET);
         }
 
     }
@@ -142,6 +140,15 @@ public class MovieDetailFragment extends BaseFragment {
         movieTitle.setText(mMovie.title);
         ratingBar.setRating(mMovie.voteAverage);
         overView.setText(mMovie.overview);
+        releasingDate.setText(mMovie.releaseDate);
+
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        Cursor movieCursor = contentResolver.query(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null, null, null, null);
+
+        if (movieCursor.getCount() > 0) {
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fav));
+            favourite = true;
+        }
 
         String movieId = Integer.toString(mMovie.id);
 
@@ -190,15 +197,11 @@ public class MovieDetailFragment extends BaseFragment {
     @OnClick({R.id.fab})
     public void addFavourite(View view) {
 
-        ContentResolver contentResolver = getActivity().getContentResolver();
 
-        String movieId = Long.toString(mMovie.id);
-        Cursor cursor = contentResolver.query(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null, null, null, null);
-        Log.e(TAG, "movie id" + MoviesContract.MovieEntry.buildMovieUri(mMovie.id) + " size:" + cursor.getCount());
 
-        if (cursor.getCount() == 0) {
+        if (!favourite) {
 
-            floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fav));
 
             //for inserting the movie description to the movie table
             ContentValues contentValues = new ContentValues();
@@ -224,11 +227,12 @@ public class MovieDetailFragment extends BaseFragment {
                 }
 
             }
+            favourite = true;
         } else {
-            // floatingActionButton.set(ColorStateList.valueOf(Color.WHITE));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_unfav));
             int id = getActivity().getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null);
             EventBus.post(new PopularMoviesEvent.MovieUnFavourite());
-            Log.e(TAG, "deleted id" + id);
+            favourite = false;
         }
 
 
