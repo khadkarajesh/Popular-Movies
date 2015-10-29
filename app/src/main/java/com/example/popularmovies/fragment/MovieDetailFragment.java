@@ -21,6 +21,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.popularmovies.R;
+import com.example.popularmovies.bus.EventBus;
+import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.data.MoviesContract;
 import com.example.popularmovies.fragment.base.BaseFragment;
@@ -32,6 +34,7 @@ import com.example.popularmovies.rest.model.MovieTrailerInfo;
 import com.example.popularmovies.util.Utility;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -140,7 +143,27 @@ public class MovieDetailFragment extends BaseFragment {
         ratingBar.setRating(mMovie.voteAverage);
         overView.setText(mMovie.overview);
 
-        getCommentsFromWeb();
+        String movieId = Integer.toString(mMovie.id);
+
+
+        String categories = Utility.getMovieCategories(getActivity());
+        if (categories.equals(getString(R.string.favourite_categories_value))) {
+            Cursor cursor = getActivity().getContentResolver().query(MoviesContract.MovieCommentEntry.buildCommentUri(mMovie.id), null, null, new String[]{movieId}, null);
+            MovieComment movieComment;
+            if (cursor.getCount() > 0) {
+                comments = new ArrayList<>();
+                while (cursor.moveToNext()) {
+                    movieComment = new MovieComment();
+                    movieComment.author = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieCommentEntry.COLUMN_AUTHOR_NAME));
+                    movieComment.content = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_COMMENT));
+
+                    comments.add(movieComment);
+                }
+                showMovieComments(comments);
+            }
+        } else {
+            getCommentsFromWeb();
+        }
     }
 
 
@@ -204,6 +227,7 @@ public class MovieDetailFragment extends BaseFragment {
         } else {
             // floatingActionButton.set(ColorStateList.valueOf(Color.WHITE));
             int id = getActivity().getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null);
+            EventBus.post(new PopularMoviesEvent.MovieUnFavourite());
             Log.e(TAG, "deleted id" + id);
         }
 

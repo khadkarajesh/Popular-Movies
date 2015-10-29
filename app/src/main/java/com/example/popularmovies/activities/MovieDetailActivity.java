@@ -26,6 +26,8 @@ import android.widget.TextView;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.base.BaseActivity;
+import com.example.popularmovies.bus.EventBus;
+import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.data.MoviesContract;
 import com.example.popularmovies.rest.RetrofitManager;
@@ -281,14 +283,11 @@ public class MovieDetailActivity extends BaseActivity {
                     cv.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_COMMENT, movieComment.content);
                     getContentResolver().insert(MoviesContract.MovieCommentEntry.CONTENT_URI, cv);
                 }
-
-                //Log.e(TAG, "uri" + contentResolver.insert(MoviesContract.MovieCommentEntry.CONTENT_URI, contentValues));
             }
-            // Log.e(TAG, "movieUri" + contentResolver.insert(MoviesContract.MovieEntry.CONTENT_URI, contentValues));
         } else {
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_unfav));
             int id = getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(movie.id), null, null);
-            Log.e(TAG, "notfav" + id);
+            EventBus.post(new PopularMoviesEvent.MovieUnFavourite());
         }
 
 

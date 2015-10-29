@@ -171,4 +171,9 @@ public class MovieDuplicateFragment extends BaseFragment {
         }
     }
 
+    @Subscribe
+    public void handleMovieUnFavouriteEvent(PopularMoviesEvent.MovieUnFavourite movieUnFavourite) {
+        fetchData();
+    }
+
 }
