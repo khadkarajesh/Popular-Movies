@@ -14,7 +14,6 @@ import com.example.popularmovies.activities.base.BaseActivity;
 import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.MovieDbHelper;
 import com.example.popularmovies.fragment.MovieDetailFragment;
-import com.example.popularmovies.fragment.MovieDuplicateFragment;
 import com.example.popularmovies.fragment.MovieFragment;
 import com.squareup.otto.Subscribe;
 
@@ -37,7 +36,7 @@ public class MovieActivity extends BaseActivity {
 
     private String DETAIL_FRAGMENT_TAG = "detail_fragment";
 
-    MovieDuplicateFragment movieDuplicateFragment;
+    MovieFragment movieFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +49,11 @@ public class MovieActivity extends BaseActivity {
         movieDbHelper.getWritableDatabase();
 
         if (savedInstanceState != null) {
-            movieDuplicateFragment = (MovieDuplicateFragment) getFragmentManager().getFragment(savedInstanceState, "mContent");
-            getFragmentManager().beginTransaction().replace(R.id.movie_container, movieDuplicateFragment).commit();
+            movieFragment = (MovieFragment) getFragmentManager().getFragment(savedInstanceState, "mContent");
+            getFragmentManager().beginTransaction().replace(R.id.movie_container, movieFragment).commit();
         } else {
-            movieDuplicateFragment = new MovieDuplicateFragment();
-            getFragmentManager().beginTransaction().add(R.id.movie_container, movieDuplicateFragment).commit();
+            movieFragment = new MovieFragment();
+            getFragmentManager().beginTransaction().add(R.id.movie_container, movieFragment).commit();
         }
 
 
@@ -110,7 +109,7 @@ public class MovieActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //Save the fragment's instance
-        getFragmentManager().putFragment(outState, "mContent", movieDuplicateFragment);
+        getFragmentManager().putFragment(outState, "mContent", movieFragment);
 
 
     }

@@ -31,8 +31,7 @@
 
         <!-- <fragment
              android:id="@+id/fragment_movie"
-             android:name="com.example.popularmovies.fragment.MovieDuplicateFragment"
-             android:layout_width="match_parent"
+             android:name="com.example.popularmovies.fragment.MovieFragment      android:layout_width="match_parent"
              android:layout_height="match_parent" />-->
 
         <LinearLayout

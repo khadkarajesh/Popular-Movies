@@ -243,7 +243,9 @@ public class MovieDetailActivity extends BaseActivity {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-        playTrailer(trailerKey);
+        if (Utility.isNetworkAvailable(this)) {
+            playTrailer(trailerKey);
+        }
     }
 
     @OnClick({R.id.fab})

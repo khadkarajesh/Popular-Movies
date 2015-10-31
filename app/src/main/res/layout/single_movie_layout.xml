@@ -30,13 +30,6 @@
                  app:sriv_left_top_corner_radius="4dip"
                  app:sriv_right_bottom_corner_radius="0dp"
                  app:sriv_right_top_corner_radius="4dip" />
-           <!-- <ImageView
-                android:id="@+id/img_movie_poster"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/abc" />-->
-
             <TextView
                 android:id="@+id/tv_movie_title"
                 android:layout_width="match_parent"

@@ -185,7 +185,9 @@ public class MovieDetailFragment extends BaseFragment {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-        playTrailer(trailerKey);
+        if (Utility.isNetworkAvailable(getActivity())) {
+            playTrailer(trailerKey);
+        }
     }
 
     @OnClick({R.id.fab})
