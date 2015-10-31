@@ -176,6 +176,10 @@ public class MovieFragment extends BaseFragment {
         }
     }
 
+    /**
+     * for handling the event on pressing the favourite button of detail view.
+     * @param movieUnFavourite
+     */
     @Subscribe
     public void handleMovieUnFavouriteEvent(PopularMoviesEvent.MovieUnFavourite movieUnFavourite) {
         fetchData();

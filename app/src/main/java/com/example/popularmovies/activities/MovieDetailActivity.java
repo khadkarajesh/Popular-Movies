@@ -367,6 +367,9 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
 
+    /**
+     * for sharing the youtube url to the social media or others.
+     */
     private void shareMovieTrailerUrl() {
         Intent shareIntent = ShareCompat.IntentBuilder.from(this).setType("text/plain")
                 .setText(Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + trailerKey).toString())
@@ -376,6 +379,9 @@ public class MovieDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * fetch the movies trailer key from the web
+     */
     private void getTrailerKeyFromWeb() {
         retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
             @Override
@@ -394,15 +400,21 @@ public class MovieDetailActivity extends BaseActivity {
         retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
     }
 
+    /**
+     * displays the movie tailer icon and trailer name.
+     *
+     * @param trailers
+     */
     private void showMovieTrailer(List<MovieTrailer> trailers) {
         tvTrailerTitle.setVisibility(View.VISIBLE);
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         for (int i = 0; i < trailers.size(); i++) {
 
             View view = layoutInflater.inflate(R.layout.layout_movie_trailers, llComments, false);
-
             LinearLayout llTrailerWrapper = ButterKnife.findById(view, R.id.ll_trailer_wrapper);
 
+
+            //add image view containing play icon for movie trailers.
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(60, 60);
             layoutParams.rightMargin = 10;
             ImageView ivPlayIcon = new ImageView(this);
@@ -419,10 +431,11 @@ public class MovieDetailActivity extends BaseActivity {
             });
 
 
+            //text view for showing the trailer name.
             LinearLayout.LayoutParams paramsTvTrailer = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             TextView tvTrailer = new TextView(this);
-            tvTrailer.setText("trailer " + i);
+            tvTrailer.setText("trailer " + i++);
             tvTrailer.setGravity(Gravity.CENTER_VERTICAL);
 
 
