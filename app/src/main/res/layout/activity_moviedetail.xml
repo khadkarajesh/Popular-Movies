@@ -25,7 +25,7 @@
             <ImageView
                 android:id="@+id/img_movie_poster"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="250dp"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 android:transitionName="@string/transition_string"
