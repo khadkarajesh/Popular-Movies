@@ -90,7 +90,7 @@ public class MovieFragment extends BaseFragment {
 
     @Override
     protected int getLayout() {
-        return R.layout.fragment_movie_duplicate;
+        return R.layout.fragment_movie;
     }
 
     /**
