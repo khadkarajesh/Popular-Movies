@@ -5,14 +5,6 @@ Android application which shows information about the movies. It contains title,
 1.  Most popular
 2.  Top Rated
 
-### ScreenShots
-
-![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscreen_shot_one%20.png)
-![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscree_shot_detail.png)
-![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscreen_shot_settins_one.png)
-![alt img](https://github.com/NewRajesh/Popular-Movies/blob/master/app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Fscreen_shot_settins.png)
-
-
 ### How to use this application?
 
 For running this application you have to keep your api key provided by the themoviedb in the projects  data/Constants.java of field **API_KEY** as :
@@ -72,7 +64,14 @@ public class Constants {
 ```
  compileSdkVersion 23
  buildToolsVersion "23.0.1"
- minSdkVersion 21
+ minSdkVersion 19
  targetSdkVersion 21
  
 ```
+
+
+### ScreenShots
+
+![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/movie_ui.png)
+![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/movie_detail.png)
+![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/tab_ui.png)
