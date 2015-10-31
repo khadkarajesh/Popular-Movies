@@ -122,6 +122,11 @@ public class MovieFragment extends BaseFragment {
         retrofitManager.getMoviesInfo(moviesCategories, pageNumber, Constants.API_KEY, moviesInfoCallback);
     }
 
+    /**
+     * set grid view with movie's thumbnail.
+     *
+     * @param movieArrayList
+     */
     private void setGridView(final List<Movie> movieArrayList) {
         duplicateMovieAdapter = new MovieAdapter(getActivity(), movieArrayList);
         gridView.setAdapter(duplicateMovieAdapter);
@@ -135,6 +140,11 @@ public class MovieFragment extends BaseFragment {
 
     }
 
+    /**
+     * fetch the data according to the categories of movie.
+     * if the categories is favourite fetches data from the database.
+     * else fetches from the web
+     */
     private void fetchData() {
         String categories = Utility.getMovieCategories(getActivity());
         if (categories.equals(getString(R.string.favourite_categories_value))) {
@@ -178,6 +188,7 @@ public class MovieFragment extends BaseFragment {
 
     /**
      * for handling the event on pressing the favourite button of detail view.
+     *
      * @param movieUnFavourite
      */
     @Subscribe
