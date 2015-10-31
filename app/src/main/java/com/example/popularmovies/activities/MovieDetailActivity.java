@@ -416,7 +416,7 @@ public class MovieDetailActivity extends BaseActivity {
 
             //add image view containing play icon for movie trailers.
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(60, 60);
-            layoutParams.rightMargin = 10;
+            layoutParams.rightMargin = 22;
             ImageView ivPlayIcon = new ImageView(this);
             ivPlayIcon.setTag(trailers.get(i));
             ivPlayIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.btn_play));
