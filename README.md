@@ -73,5 +73,9 @@ public class Constants {
 ### ScreenShots
 
 ![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/movie_ui.png)
+
+
 ![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/movie_detail.png)
+
+
 ![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/tab_ui.png)
