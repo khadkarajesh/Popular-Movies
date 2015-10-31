@@ -31,7 +31,6 @@ public class SingleMovieItem extends FrameLayout {
 
     private static final String TAG = SingleMovieItem.class.getSimpleName();
     private final String IMAGE_POSTER_BASE_URL = "http://image.tmdb.org/t/p/w342";
-
     private Movie movie;
 
     @Bind(R.id.img_movie_poster)

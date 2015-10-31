@@ -15,6 +15,7 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -366,8 +367,6 @@ public class MovieDetailActivity extends BaseActivity {
             public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
                 if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
                     trailerKey = response.body().movieTrailers.get(0).key;
-                    playTrailer(response.body().movieTrailers.get(0).key);
-
                 }
             }
 

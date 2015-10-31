@@ -9,10 +9,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -88,6 +94,8 @@ public class MovieDetailFragment extends BaseFragment {
     private AppCompatActivity activity;
     private String TAG = MovieDetailFragment.class.getSimpleName();
 
+    String trailerKey;
+
 
     public static MovieDetailFragment newInstance(Movie movie, String tablet) {
         MovieDetailFragment fragment = new MovieDetailFragment();
@@ -100,6 +108,7 @@ public class MovieDetailFragment extends BaseFragment {
 
     public MovieDetailFragment() {
         // Required empty public constructor
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -176,27 +185,11 @@ public class MovieDetailFragment extends BaseFragment {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-
-        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new Callback<MovieTrailerInfo>() {
-            @Override
-            public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
-                    Log.e(TAG, "key" + response.body().movieTrailers.get(0).key);
-                    playTrailer(response.body().movieTrailers.get(0).key);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        };
-        retrofitManager.getTrailer(mMovie.id, Constants.API_KEY, movieTrailerInfoCallback);
+        playTrailer(trailerKey);
     }
 
     @OnClick({R.id.fab})
     public void addFavourite(View view) {
-
 
 
         if (!favourite) {
@@ -274,7 +267,7 @@ public class MovieDetailFragment extends BaseFragment {
             }
         };
         retrofitManager.getComments(mMovie.id, Constants.API_KEY, callback);
-
+        getTrailerKeyFromWeb();
 
     }
 
@@ -314,4 +307,51 @@ public class MovieDetailFragment extends BaseFragment {
         return R.layout.fragment_movie_detail_tab;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_movie_detail, menu);
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_share) {
+            shareMovieTrailerUrl();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void shareMovieTrailerUrl() {
+        Intent shareIntent = ShareCompat.IntentBuilder.from(getActivity()).setType("text/plain")
+                .setText(Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + trailerKey).toString())
+                .getIntent();
+        if (shareIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(shareIntent);
+        }
+    }
+
+    private void getTrailerKeyFromWeb() {
+        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
+            @Override
+            public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
+                    trailerKey = response.body().movieTrailers.get(0).key;
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        };
+        retrofitManager.getTrailer(mMovie.id, Constants.API_KEY, movieTrailerInfoCallback);
+    }
 }

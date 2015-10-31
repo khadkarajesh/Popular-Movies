@@ -24,9 +24,6 @@
             android:label="@string/title_activity_movie_detail"
             android:launchMode="singleInstance"></activity>
         <activity
-            android:name=".activities.TestActivity"
-            android:label="@string/title_activity_test_activities"></activity>
-        <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/settings_title" />
 
