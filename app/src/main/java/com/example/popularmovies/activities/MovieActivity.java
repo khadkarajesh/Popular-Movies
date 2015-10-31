@@ -38,6 +38,8 @@ public class MovieActivity extends BaseActivity {
 
     MovieFragment movieFragment;
 
+    private String MOVIE_FRAGMENT = "movie_fragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +51,7 @@ public class MovieActivity extends BaseActivity {
         movieDbHelper.getWritableDatabase();
 
         if (savedInstanceState != null) {
-            movieFragment = (MovieFragment) getFragmentManager().getFragment(savedInstanceState, "mContent");
+            movieFragment = (MovieFragment) getFragmentManager().getFragment(savedInstanceState, MOVIE_FRAGMENT);
             getFragmentManager().beginTransaction().replace(R.id.movie_container, movieFragment).commit();
         } else {
             movieFragment = new MovieFragment();
@@ -93,15 +95,13 @@ public class MovieActivity extends BaseActivity {
         if (detailContainer != null) {
             if (moviePosterSelectionEvent.movie != null && detailContainer != null) {
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.movie_detail_container, MovieDetailFragment.newInstance(moviePosterSelectionEvent.movie, "tablet"), DETAIL_FRAGMENT_TAG)
+                        .replace(R.id.movie_detail_container, MovieDetailFragment.newInstance(moviePosterSelectionEvent.movie), DETAIL_FRAGMENT_TAG)
                         .commit();
             }
-            Log.e(TAG, "ifFragmentCalled");
         } else {
             Intent intent = new Intent(MovieActivity.this, MovieDetailActivity.class);
             intent.putExtra(MovieDetailActivity.MOVIE_OBJECT, moviePosterSelectionEvent.movie);
             startActivity(intent);
-            Log.e(TAG, "elseFragmentCalled");
         }
     }
 
@@ -109,7 +109,7 @@ public class MovieActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //Save the fragment's instance
-        getFragmentManager().putFragment(outState, "mContent", movieFragment);
+        getFragmentManager().putFragment(outState, MOVIE_FRAGMENT, movieFragment);
 
 
     }

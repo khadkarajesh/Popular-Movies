@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
@@ -16,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +37,7 @@ import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
 import com.example.popularmovies.rest.model.MovieComment;
 import com.example.popularmovies.rest.model.MovieComments;
+import com.example.popularmovies.rest.model.MovieTrailer;
 import com.example.popularmovies.rest.model.MovieTrailerInfo;
 import com.example.popularmovies.util.Utility;
 import com.squareup.picasso.Callback;
@@ -88,13 +91,22 @@ public class MovieDetailActivity extends BaseActivity {
     @Bind(R.id.ll_comments)
     LinearLayout llComments;
 
-    @Bind(R.id.tv_comment_title)
+    @Nullable
+    @Bind(R.id.ll_trailers)
+    LinearLayout llTrailers;
 
+    @Bind(R.id.tv_comment_title)
     TextView tvCommentTitle;
+
+    @Nullable
+    @Bind(R.id.tv_trailer_title)
+    TextView tvTrailerTitle;
+
     Movie movie;
     RetrofitManager retrofitManager = null;
 
     List<MovieComment> comments;
+    List<MovieTrailer> trailers;
 
     ColorStateList colorList;
 
@@ -120,6 +132,7 @@ public class MovieDetailActivity extends BaseActivity {
 
         //if movie doesn't contain the comment make comment textView invisible
         tvCommentTitle.setVisibility(View.GONE);
+        tvTrailerTitle.setVisibility(View.GONE);
 
         //register the retrofit for network call
         retrofitManager = RetrofitManager.getInstance();
@@ -369,6 +382,7 @@ public class MovieDetailActivity extends BaseActivity {
             public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
                 if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
                     trailerKey = response.body().movieTrailers.get(0).key;
+                    showMovieTrailer(response.body().movieTrailers);
                 }
             }
 
@@ -379,5 +393,45 @@ public class MovieDetailActivity extends BaseActivity {
         };
         retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
     }
+
+    private void showMovieTrailer(List<MovieTrailer> trailers) {
+        tvTrailerTitle.setVisibility(View.VISIBLE);
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        for (int i = 0; i < trailers.size(); i++) {
+
+            View view = layoutInflater.inflate(R.layout.layout_movie_trailers, llComments, false);
+
+            LinearLayout llTrailerWrapper = ButterKnife.findById(view, R.id.ll_trailer_wrapper);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(60, 60);
+            layoutParams.rightMargin = 10;
+            ImageView ivPlayIcon = new ImageView(this);
+            ivPlayIcon.setTag(trailers.get(i));
+            ivPlayIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.btn_play));
+            ivPlayIcon.setLayoutParams(layoutParams);
+
+            ivPlayIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MovieTrailer movieTrailer = (MovieTrailer) v.getTag();
+                    playTrailer(movieTrailer.key);
+                }
+            });
+
+
+            LinearLayout.LayoutParams paramsTvTrailer = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            TextView tvTrailer = new TextView(this);
+            tvTrailer.setText("trailer " + i);
+            tvTrailer.setGravity(Gravity.CENTER_VERTICAL);
+
+
+            llTrailerWrapper.addView(ivPlayIcon, layoutParams);
+            llTrailerWrapper.addView(tvTrailer, paramsTvTrailer);
+
+            llTrailers.addView(llTrailerWrapper);
+        }
+    }
+
 
 }
