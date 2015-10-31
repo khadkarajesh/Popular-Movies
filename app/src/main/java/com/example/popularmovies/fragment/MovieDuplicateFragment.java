@@ -76,7 +76,15 @@ public class MovieDuplicateFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fetchData();
+
+        if (savedInstanceState != null) {
+            //Restore the fragment's state here
+            movieArrayList = savedInstanceState.getParcelableArrayList(MOVIE_DATA);
+            setGridView(movieArrayList);
+        } else {
+            fetchData();
+        }
+
     }
 
 
@@ -122,8 +130,8 @@ public class MovieDuplicateFragment extends BaseFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(MOVIE_DATA, movieArrayList);
         super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(MOVIE_DATA, movieArrayList);
 
     }
 
@@ -145,9 +153,6 @@ public class MovieDuplicateFragment extends BaseFragment {
                 movieArrayList.add(movie);
             }
             setGridView(movieArrayList);
-
-            // Log.e(TAG, "moviesWithComment" + cursor.getCount());
-
         } else {
             fetchMoviesFromWeb(1, categories);
         }
@@ -175,5 +180,6 @@ public class MovieDuplicateFragment extends BaseFragment {
     public void handleMovieUnFavouriteEvent(PopularMoviesEvent.MovieUnFavourite movieUnFavourite) {
         fetchData();
     }
+
 
 }

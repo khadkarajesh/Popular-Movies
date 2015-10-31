@@ -14,6 +14,7 @@ import com.example.popularmovies.activities.base.BaseActivity;
 import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.MovieDbHelper;
 import com.example.popularmovies.fragment.MovieDetailFragment;
+import com.example.popularmovies.fragment.MovieDuplicateFragment;
 import com.example.popularmovies.fragment.MovieFragment;
 import com.squareup.otto.Subscribe;
 
@@ -36,6 +37,8 @@ public class MovieActivity extends BaseActivity {
 
     private String DETAIL_FRAGMENT_TAG = "detail_fragment";
 
+    MovieDuplicateFragment movieDuplicateFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +48,14 @@ public class MovieActivity extends BaseActivity {
 
         MovieDbHelper movieDbHelper = new MovieDbHelper(this);
         movieDbHelper.getWritableDatabase();
+
+        if (savedInstanceState != null) {
+            movieDuplicateFragment = (MovieDuplicateFragment) getFragmentManager().getFragment(savedInstanceState, "mContent");
+            getFragmentManager().beginTransaction().replace(R.id.movie_container, movieDuplicateFragment).commit();
+        } else {
+            movieDuplicateFragment = new MovieDuplicateFragment();
+            getFragmentManager().beginTransaction().add(R.id.movie_container, movieDuplicateFragment).commit();
+        }
 
 
     }
@@ -94,4 +105,14 @@ public class MovieActivity extends BaseActivity {
             Log.e(TAG, "elseFragmentCalled");
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //Save the fragment's instance
+        getFragmentManager().putFragment(outState, "mContent", movieDuplicateFragment);
+
+
+    }
+
 }

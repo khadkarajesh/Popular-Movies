@@ -190,7 +190,7 @@ public class MovieDetailActivity extends BaseActivity {
                 showMovieComments(comments);
             }
         } else {
-            getCommentsFromWeb();
+            getDataFromWeb();
         }
     }
 
@@ -242,22 +242,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
-            @Override
-            public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
-                    trailerKey = response.body().movieTrailers.get(0).key;
-                    playTrailer(response.body().movieTrailers.get(0).key);
-
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        };
-        retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
+        playTrailer(trailerKey);
     }
 
     @OnClick({R.id.fab})
@@ -318,7 +303,7 @@ public class MovieDetailActivity extends BaseActivity {
     /**
      * get comments of movie having specific id from web
      */
-    private void getCommentsFromWeb() {
+    private void getDataFromWeb() {
 
         retrofit.Callback<MovieComments> callback = new retrofit.Callback<MovieComments>() {
             @Override
@@ -337,6 +322,8 @@ public class MovieDetailActivity extends BaseActivity {
             }
         };
         retrofitManager.getComments(movie.id, Constants.API_KEY, callback);
+
+        getTrailerKeyFromWeb();
     }
 
     /**
@@ -371,6 +358,25 @@ public class MovieDetailActivity extends BaseActivity {
         if (shareIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(shareIntent);
         }
+    }
+
+    private void getTrailerKeyFromWeb() {
+        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
+            @Override
+            public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
+                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
+                    trailerKey = response.body().movieTrailers.get(0).key;
+                    playTrailer(response.body().movieTrailers.get(0).key);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        };
+        retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
     }
 
 }
