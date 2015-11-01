@@ -20,25 +20,12 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <LinearLayout
+        android:id="@+id/movie_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:clipToPadding="true"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingBottom="5dp"
         android:paddingLeft="5dp"
-        android:paddingRight="5dp">
+        android:paddingRight="5dp" />
 
-        <!-- <fragment
-             android:id="@+id/fragment_movie"
-             android:name="com.example.popularmovies.fragment.MovieFragment      android:layout_width="match_parent"
-             android:layout_height="match_parent" />-->
-
-        <LinearLayout
-            android:id="@+id/movie_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        </LinearLayout>
-    </LinearLayout>
 </LinearLayout>
