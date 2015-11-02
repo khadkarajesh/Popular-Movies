@@ -1,5 +1,6 @@
 package com.example.popularmovies.fragment;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -53,10 +54,6 @@ import retrofit.Retrofit;
 
 
 public class MovieDetailFragment extends BaseFragment {
-
-    private static final String MOVIE_OBJECT = "movie_object";
-    private static final String TABLET = "tablet";
-
     private Boolean favourite = false;
 
     @Bind(R.id.img_movie_poster)
@@ -97,11 +94,12 @@ public class MovieDetailFragment extends BaseFragment {
     RetrofitManager retrofitManager = null;
 
     List<MovieComment> comments;
+    List<MovieTrailer> trailers;
 
 
     private Movie mMovie;
 
-    private AppCompatActivity activity;
+    private Activity activity;
     private String TAG = MovieDetailFragment.class.getSimpleName();
 
     String trailerKey;
@@ -110,7 +108,7 @@ public class MovieDetailFragment extends BaseFragment {
     public static MovieDetailFragment newInstance(Movie movie) {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(MOVIE_OBJECT, movie);
+        args.putParcelable(Constants.MOVIE_OBJECT, movie);
         fragment.setArguments(args);
         return fragment;
     }
@@ -125,16 +123,17 @@ public class MovieDetailFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mMovie = getArguments().getParcelable(MOVIE_OBJECT);
+            mMovie = getArguments().getParcelable(Constants.MOVIE_OBJECT);
         }
 
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = (AppCompatActivity) getActivity();
+        activity = (Activity) getActivity();
 
         //if movie doesn't contain the comment make comment textView invisible
         tvCommentTitle.setVisibility(View.GONE);
@@ -144,8 +143,6 @@ public class MovieDetailFragment extends BaseFragment {
         retrofitManager = RetrofitManager.getInstance();
 
         setData();
-
-
     }
 
 
@@ -154,27 +151,27 @@ public class MovieDetailFragment extends BaseFragment {
      */
     private void setData() {
 
-        Picasso.with(getActivity()).load(Utility.getImageUri(mMovie.posterPath))
+        Picasso.with(activity).load(Utility.getImageUri(mMovie.posterPath))
                 .into(moviePoster);
         movieTitle.setText(mMovie.title);
         ratingBar.setRating(mMovie.voteAverage);
         overView.setText(mMovie.overview);
         releasingDate.setText(mMovie.releaseDate);
 
-        ContentResolver contentResolver = getActivity().getContentResolver();
+        ContentResolver contentResolver = activity.getContentResolver();
         Cursor movieCursor = contentResolver.query(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null, null, null, null);
 
         if (movieCursor.getCount() > 0) {
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fav));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_fav));
             favourite = true;
         }
 
         String movieId = Integer.toString(mMovie.id);
 
 
-        String categories = Utility.getMovieCategories(getActivity());
+        String categories = Utility.getMovieCategories(activity);
         if (categories.equals(getString(R.string.favourite_categories_value))) {
-            Cursor cursor = getActivity().getContentResolver().query(MoviesContract.MovieCommentEntry.buildCommentUri(mMovie.id), null, null, new String[]{movieId}, null);
+            Cursor cursor = activity.getContentResolver().query(MoviesContract.MovieCommentEntry.buildCommentUri(mMovie.id), null, null, new String[]{movieId}, null);
             MovieComment movieComment;
             if (cursor.getCount() > 0) {
                 comments = new ArrayList<>();
@@ -195,7 +192,7 @@ public class MovieDetailFragment extends BaseFragment {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-        if (Utility.isNetworkAvailable(getActivity())) {
+        if (Utility.isNetworkAvailable(activity)) {
             playTrailer(trailerKey);
         }
     }
@@ -206,7 +203,7 @@ public class MovieDetailFragment extends BaseFragment {
 
         if (!favourite) {
 
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fav));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_fav));
 
             //for inserting the movie description to the movie table
             ContentValues contentValues = new ContentValues();
@@ -217,7 +214,7 @@ public class MovieDetailFragment extends BaseFragment {
             contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_RATING, mMovie.voteAverage);
             contentValues.put(MoviesContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, mMovie.overview);
 
-            getActivity().getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, contentValues);
+            activity.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, contentValues);
 
 
             ContentValues cv = null;
@@ -228,14 +225,14 @@ public class MovieDetailFragment extends BaseFragment {
                     cv.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_ID, mMovie.id);
                     cv.put(MoviesContract.MovieCommentEntry.COLUMN_AUTHOR_NAME, movieComment.author);
                     cv.put(MoviesContract.MovieCommentEntry.COLUMN_MOVIE_COMMENT, movieComment.content);
-                    getActivity().getContentResolver().insert(MoviesContract.MovieCommentEntry.CONTENT_URI, cv);
+                    activity.getContentResolver().insert(MoviesContract.MovieCommentEntry.CONTENT_URI, cv);
                 }
 
             }
             favourite = true;
         } else {
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_unfav));
-            int id = getActivity().getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null);
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_unfav));
+            int id = activity.getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null);
             EventBus.post(new PopularMoviesEvent.MovieUnFavourite());
             favourite = false;
         }
@@ -342,10 +339,10 @@ public class MovieDetailFragment extends BaseFragment {
     }
 
     private void shareMovieTrailerUrl() {
-        Intent shareIntent = ShareCompat.IntentBuilder.from(getActivity()).setType("text/plain")
+        Intent shareIntent = ShareCompat.IntentBuilder.from(activity).setType("text/plain")
                 .setText(Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + trailerKey).toString())
                 .getIntent();
-        if (shareIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+        if (shareIntent.resolveActivity(activity.getPackageManager()) != null) {
             startActivity(shareIntent);
         }
     }
@@ -370,7 +367,7 @@ public class MovieDetailFragment extends BaseFragment {
 
     private void showMovieTrailer(List<MovieTrailer> trailers) {
         tvTrailerTitle.setVisibility(View.VISIBLE);
-        LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int i = 0; i < trailers.size(); i++) {
 
             View view = layoutInflater.inflate(R.layout.layout_movie_trailers, llComments, false);
@@ -379,9 +376,9 @@ public class MovieDetailFragment extends BaseFragment {
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(60, 60);
             layoutParams.rightMargin = 10;
-            ImageView ivPlayIcon = new ImageView(getActivity());
+            ImageView ivPlayIcon = new ImageView(activity);
             ivPlayIcon.setTag(trailers.get(i));
-            ivPlayIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.btn_play));
+            ivPlayIcon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.btn_play));
             ivPlayIcon.setLayoutParams(layoutParams);
 
             ivPlayIcon.setOnClickListener(new View.OnClickListener() {
@@ -395,7 +392,7 @@ public class MovieDetailFragment extends BaseFragment {
 
             LinearLayout.LayoutParams paramsTvTrailer = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            TextView tvTrailer = new TextView(getActivity());
+            TextView tvTrailer = new TextView(activity);
             tvTrailer.setText("trailer " + i);
             tvTrailer.setGravity(Gravity.CENTER_VERTICAL);
 

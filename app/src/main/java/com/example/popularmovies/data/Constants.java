@@ -8,5 +8,6 @@ public class Constants {
 
     public static final String YOUTUBE_INTENT_BASE_URI = "vnd.youtube://";
     public static final String MOVIE_FRAGMENT = "movieFragment";
+    public static final String MOVIE_OBJECT = "movie_object";
 
 }

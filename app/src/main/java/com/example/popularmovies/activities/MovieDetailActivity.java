@@ -58,9 +58,7 @@ import retrofit.Retrofit;
  */
 public class MovieDetailActivity extends BaseActivity {
 
-    private static final String TAG = MovieDetailActivity.class.getSimpleName();
 
-    public static final String MOVIE_OBJECT = "data";
 
     private Boolean favourite = false;
 
@@ -121,7 +119,7 @@ public class MovieDetailActivity extends BaseActivity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         //get the single movie data passed form intent
-        movie = getIntent().getParcelableExtra(MovieDetailActivity.MOVIE_OBJECT);
+        movie = getIntent().getParcelableExtra(Constants.MOVIE_OBJECT);
 
         //set the toolbar
         setSupportActionBar(toolbar);
