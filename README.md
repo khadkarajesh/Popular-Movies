@@ -72,10 +72,11 @@ public class Constants {
 
 ### ScreenShots
 
+#### Movies Listing view
 ![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/movie_ui.png)
 
-
+#### Movies Detail Description
 ![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/movie_detail.png)
 
-
+#### Movies Tablet layout view
 ![alt img](https://github.com/rajesh-khadka/Popular-Movies/blob/master/app/screenshots/tab_ui.png)
