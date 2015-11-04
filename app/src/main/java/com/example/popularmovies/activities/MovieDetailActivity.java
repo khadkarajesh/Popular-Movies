@@ -432,7 +432,7 @@ public class MovieDetailActivity extends BaseActivity {
             LinearLayout.LayoutParams paramsTvTrailer = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             TextView tvTrailer = new TextView(this);
-            
+
             tvTrailer.setText("trailer ");
             tvTrailer.setGravity(Gravity.CENTER_VERTICAL);
 
