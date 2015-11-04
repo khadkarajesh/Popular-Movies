@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.example.popularmovies.BuildConfig;
 import com.example.popularmovies.R;
 import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
@@ -265,7 +266,7 @@ public class MovieDetailFragment extends BaseFragment {
 
             }
         };
-        retrofitManager.getComments(mMovie.id, Constants.API_KEY, callback);
+        retrofitManager.getComments(mMovie.id, BuildConfig.MOVIE_API_KEY, callback);
         getTrailerKeyFromWeb();
 
     }
@@ -370,7 +371,7 @@ public class MovieDetailFragment extends BaseFragment {
 
                 }
             };
-            retrofitManager.getTrailer(mMovie.id, Constants.API_KEY, movieTrailerInfoCallback);
+            retrofitManager.getTrailer(mMovie.id, BuildConfig.MOVIE_API_KEY, movieTrailerInfoCallback);
         }
     }
 

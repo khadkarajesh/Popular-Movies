@@ -2,7 +2,7 @@ package com.example.popularmovies.rest.model;
 
 import android.util.Log;
 
-import com.example.popularmovies.data.Constants;
+import com.example.popularmovies.BuildConfig;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.google.gson.annotations.SerializedName;
 
@@ -41,7 +41,7 @@ public class MovieTrailer {
 
             }
         };
-        retrofitManager.getTrailer(movieId, Constants.API_KEY, movieTrailerInfoCallback);
+        retrofitManager.getTrailer(movieId, BuildConfig.MOVIE_API_KEY, movieTrailerInfoCallback);
         return result[0];
     }
 }

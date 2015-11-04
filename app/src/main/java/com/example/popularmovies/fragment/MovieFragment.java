@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.popularmovies.BuildConfig;
 import com.example.popularmovies.R;
 import com.example.popularmovies.adapter.MovieAdapter;
 import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
-import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.data.MoviesContract;
 import com.example.popularmovies.fragment.base.BaseFragment;
 import com.example.popularmovies.rest.RetrofitManager;
@@ -119,7 +119,7 @@ public class MovieFragment extends BaseFragment {
 
             }
         };
-        retrofitManager.getMoviesInfo(moviesCategories, pageNumber, Constants.API_KEY, moviesInfoCallback);
+        retrofitManager.getMoviesInfo(moviesCategories, pageNumber, BuildConfig.MOVIE_API_KEY, moviesInfoCallback);
     }
 
     /**

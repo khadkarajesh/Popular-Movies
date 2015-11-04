@@ -16,7 +16,6 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.example.popularmovies.BuildConfig;
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.base.BaseActivity;
 import com.example.popularmovies.bus.EventBus;
@@ -57,7 +57,6 @@ import retrofit.Retrofit;
  * shows the details{movie title,release date, rating,comments,trailer via intent} of single movie.
  */
 public class MovieDetailActivity extends BaseActivity {
-
 
 
     private Boolean favourite = false;
@@ -335,7 +334,7 @@ public class MovieDetailActivity extends BaseActivity {
 
             }
         };
-        retrofitManager.getComments(movie.id, Constants.API_KEY, callback);
+        retrofitManager.getComments(movie.id, BuildConfig.MOVIE_API_KEY, callback);
 
         getTrailerKeyFromWeb();
     }
@@ -395,7 +394,7 @@ public class MovieDetailActivity extends BaseActivity {
 
             }
         };
-        retrofitManager.getTrailer(movie.id, Constants.API_KEY, movieTrailerInfoCallback);
+        retrofitManager.getTrailer(movie.id, BuildConfig.MOVIE_API_KEY, movieTrailerInfoCallback);
     }
 
     /**
@@ -433,7 +432,8 @@ public class MovieDetailActivity extends BaseActivity {
             LinearLayout.LayoutParams paramsTvTrailer = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             TextView tvTrailer = new TextView(this);
-            tvTrailer.setText("trailer " + i++);
+            
+            tvTrailer.setText("trailer ");
             tvTrailer.setGravity(Gravity.CENTER_VERTICAL);
 
 
