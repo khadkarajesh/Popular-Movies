@@ -95,6 +95,13 @@ public class MovieActivity extends BaseActivity {
     }
 
 
+    /**
+     * handle the event posted when clicked in the movie listing grid view
+     * and launch {@link MovieDetailFragment} with the movie detail if it is tablet layout.
+     * other wise launch the {@link MovieDetailActivity} with movie detail.
+     *
+     * @param moviePosterSelectionEvent
+     */
     @Subscribe
     public void handleMoviePosterSelectionEvent(PopularMoviesEvent.MoviePosterSelectionEvent moviePosterSelectionEvent) {
         if (detailContainer != null) {
