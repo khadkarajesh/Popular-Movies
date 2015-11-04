@@ -7,19 +7,13 @@ Android application which shows information about the movies. It contains title,
 
 ### How to use this application?
 
-For running this application you have to keep your api key provided by the themoviedb in the projects  data/Constants.java of field **API_KEY** as :
+For running this application you have to keep your api key provided by the themoviedb in the projects  build.gradle field **API_KEY** as :
 
-
+***build.gradle***
 ```
-public class Constants {
-
-    public static final String MOVIE_BASE_URL = "http://api.themoviedb.org/";
-    public static final String API_KEY="***your_api_key***";
-
-    public static final String YOUTUBE_INTENT_BASE_URI="vnd.youtube://";
-
-
-}
+ buildTypes.each {
+        it.buildConfigField 'String', 'MOVIE_API_KEY', '"YOUR_API_KEY"'
+    }
 ```
 
 ##Library Used
