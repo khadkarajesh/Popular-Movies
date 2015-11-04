@@ -48,7 +48,9 @@ import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-
+/**
+ * shows the details{movie title,release date, rating,comments,trailer via intent} of single movie.
+ */
 public class MovieDetailFragment extends BaseFragment {
     private Boolean favourite = false;
 
@@ -96,7 +98,6 @@ public class MovieDetailFragment extends BaseFragment {
     private Movie mMovie;
 
     private Activity activity;
-    private String TAG = MovieDetailFragment.class.getSimpleName();
 
     String trailerKey;
 
@@ -121,16 +122,6 @@ public class MovieDetailFragment extends BaseFragment {
         if (getArguments() != null) {
             mMovie = getArguments().getParcelable(Constants.MOVIE_OBJECT);
         }
-
-    }
-
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        activity = (Activity) getActivity();
-
 
     }
 
@@ -180,6 +171,9 @@ public class MovieDetailFragment extends BaseFragment {
     }
 
 
+    /**
+     * play movie trailer on clicking play icon
+     */
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
         if (Utility.isNetworkAvailable(getActivity())) {
@@ -187,6 +181,12 @@ public class MovieDetailFragment extends BaseFragment {
         }
     }
 
+
+    /**
+     * mark the movie as favourite on clicking on favourite icon and add to database
+     *
+     * @param view
+     */
     @OnClick({R.id.fab})
     public void addFavourite(View view) {
 
@@ -336,6 +336,9 @@ public class MovieDetailFragment extends BaseFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * method shares the  youtube url to social media
+     */
     private void shareMovieTrailerUrl() {
         Intent shareIntent = ShareCompat.IntentBuilder.from(getActivity()).setType("text/plain")
                 .setText(Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + trailerKey).toString())
@@ -345,6 +348,9 @@ public class MovieDetailFragment extends BaseFragment {
         }
     }
 
+    /**
+     * gets the trailerKey from the web having movie id {@link #mMovie}
+     */
     private void getTrailerKeyFromWeb() {
         if (trailers == null) {
             retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
@@ -368,6 +374,11 @@ public class MovieDetailFragment extends BaseFragment {
         }
     }
 
+    /**
+     * view shows the movie trailer on clicking the play icon launches the youtube application.
+     *
+     * @param trailers
+     */
     private void showMovieTrailer(List<MovieTrailer> trailers) {
         tvTrailerTitle.setVisibility(View.VISIBLE);
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -384,6 +395,7 @@ public class MovieDetailFragment extends BaseFragment {
             ivPlayIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.btn_play));
             ivPlayIcon.setLayoutParams(layoutParams);
 
+            //launches the youtube application with trailer
             ivPlayIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
