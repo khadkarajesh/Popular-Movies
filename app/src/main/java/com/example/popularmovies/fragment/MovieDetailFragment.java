@@ -12,10 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -135,14 +131,7 @@ public class MovieDetailFragment extends BaseFragment {
 
         activity = (Activity) getActivity();
 
-        //if movie doesn't contain the comment make comment textView invisible
-        tvCommentTitle.setVisibility(View.GONE);
-        tvTrailerTitle.setVisibility(View.GONE);
 
-        //register the retrofit for network call
-        retrofitManager = RetrofitManager.getInstance();
-
-        setData();
     }
 
 
@@ -158,20 +147,20 @@ public class MovieDetailFragment extends BaseFragment {
         overView.setText(mMovie.overview);
         releasingDate.setText(mMovie.releaseDate);
 
-        ContentResolver contentResolver = activity.getContentResolver();
+        ContentResolver contentResolver = getActivity().getContentResolver();
         Cursor movieCursor = contentResolver.query(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null, null, null, null);
 
         if (movieCursor.getCount() > 0) {
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_fav));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fav));
             favourite = true;
         }
 
         String movieId = Integer.toString(mMovie.id);
 
 
-        String categories = Utility.getMovieCategories(activity);
+        String categories = Utility.getMovieCategories(getActivity());
         if (categories.equals(getString(R.string.favourite_categories_value))) {
-            Cursor cursor = activity.getContentResolver().query(MoviesContract.MovieCommentEntry.buildCommentUri(mMovie.id), null, null, new String[]{movieId}, null);
+            Cursor cursor = getActivity().getContentResolver().query(MoviesContract.MovieCommentEntry.buildCommentUri(mMovie.id), null, null, new String[]{movieId}, null);
             MovieComment movieComment;
             if (cursor.getCount() > 0) {
                 comments = new ArrayList<>();
@@ -184,6 +173,7 @@ public class MovieDetailFragment extends BaseFragment {
                 }
                 showMovieComments(comments);
             }
+
         } else {
             getCommentsFromWeb();
         }
@@ -192,7 +182,7 @@ public class MovieDetailFragment extends BaseFragment {
 
     @OnClick({R.id.iv_play_movie})
     public void onClick() {
-        if (Utility.isNetworkAvailable(activity)) {
+        if (Utility.isNetworkAvailable(getActivity())) {
             playTrailer(trailerKey);
         }
     }
@@ -203,7 +193,7 @@ public class MovieDetailFragment extends BaseFragment {
 
         if (!favourite) {
 
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_fav));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_fav));
 
             //for inserting the movie description to the movie table
             ContentValues contentValues = new ContentValues();
@@ -231,8 +221,8 @@ public class MovieDetailFragment extends BaseFragment {
             }
             favourite = true;
         } else {
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_unfav));
-            int id = activity.getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null);
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_unfav));
+            int id = getActivity().getContentResolver().delete(MoviesContract.MovieEntry.buildMovieUri(mMovie.id), null, null);
             EventBus.post(new PopularMoviesEvent.MovieUnFavourite());
             favourite = false;
         }
@@ -249,7 +239,7 @@ public class MovieDetailFragment extends BaseFragment {
         if (key != null) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + key));
             // Verify the original intent will resolve to at least one activity
-            if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(intent);
             }
         }
@@ -288,7 +278,7 @@ public class MovieDetailFragment extends BaseFragment {
     private void showMovieComments(List<MovieComment> response) {
 
         tvCommentTitle.setVisibility(View.VISIBLE);
-        LayoutInflater layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (MovieComment comment : response) {
 
             View view = layoutInflater.inflate(R.layout.layout_movie_comments, llComments, false);
@@ -301,12 +291,20 @@ public class MovieDetailFragment extends BaseFragment {
             llComments.addView(view);
         }
 
-
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //if movie doesn't contain the comment make comment textView invisible
+        tvCommentTitle.setVisibility(View.GONE);
+        tvTrailerTitle.setVisibility(View.GONE);
+
+        //register the retrofit for network call
+        retrofitManager = RetrofitManager.getInstance();
+
+        setData();
 
     }
 
@@ -339,35 +337,40 @@ public class MovieDetailFragment extends BaseFragment {
     }
 
     private void shareMovieTrailerUrl() {
-        Intent shareIntent = ShareCompat.IntentBuilder.from(activity).setType("text/plain")
+        Intent shareIntent = ShareCompat.IntentBuilder.from(getActivity()).setType("text/plain")
                 .setText(Uri.parse(Constants.YOUTUBE_INTENT_BASE_URI + trailerKey).toString())
                 .getIntent();
-        if (shareIntent.resolveActivity(activity.getPackageManager()) != null) {
+        if (shareIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivity(shareIntent);
         }
     }
 
     private void getTrailerKeyFromWeb() {
-        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
-            @Override
-            public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
-                    trailerKey = response.body().movieTrailers.get(0).key;
-                    showMovieTrailer(response.body().movieTrailers);
+        if (trailers == null) {
+            retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
+                @Override
+                public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
+                    if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
+                        trailers = new ArrayList<>();
+                        trailerKey = response.body().movieTrailers.get(0).key;
+                        trailers.addAll(response.body().movieTrailers);
+                        showMovieTrailer(trailers);
+
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
+                @Override
+                public void onFailure(Throwable t) {
 
-            }
-        };
-        retrofitManager.getTrailer(mMovie.id, Constants.API_KEY, movieTrailerInfoCallback);
+                }
+            };
+            retrofitManager.getTrailer(mMovie.id, Constants.API_KEY, movieTrailerInfoCallback);
+        }
     }
 
     private void showMovieTrailer(List<MovieTrailer> trailers) {
         tvTrailerTitle.setVisibility(View.VISIBLE);
-        LayoutInflater layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int i = 0; i < trailers.size(); i++) {
 
             View view = layoutInflater.inflate(R.layout.layout_movie_trailers, llComments, false);
@@ -376,9 +379,9 @@ public class MovieDetailFragment extends BaseFragment {
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(60, 60);
             layoutParams.rightMargin = 10;
-            ImageView ivPlayIcon = new ImageView(activity);
+            ImageView ivPlayIcon = new ImageView(getActivity());
             ivPlayIcon.setTag(trailers.get(i));
-            ivPlayIcon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.btn_play));
+            ivPlayIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.btn_play));
             ivPlayIcon.setLayoutParams(layoutParams);
 
             ivPlayIcon.setOnClickListener(new View.OnClickListener() {
@@ -392,7 +395,7 @@ public class MovieDetailFragment extends BaseFragment {
 
             LinearLayout.LayoutParams paramsTvTrailer = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            TextView tvTrailer = new TextView(activity);
+            TextView tvTrailer = new TextView(getActivity());
             tvTrailer.setText("trailer " + i);
             tvTrailer.setGravity(Gravity.CENTER_VERTICAL);
 

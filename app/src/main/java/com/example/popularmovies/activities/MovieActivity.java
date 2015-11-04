@@ -1,27 +1,24 @@
 package com.example.popularmovies.activities;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.base.BaseActivity;
-import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.data.MovieDbHelper;
 import com.example.popularmovies.fragment.MovieDetailFragment;
 import com.example.popularmovies.fragment.MovieFragment;
-import com.example.popularmovies.rest.model.Movie;
 import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
-import timber.log.Timber;
 
 
 /**
@@ -43,7 +40,6 @@ public class MovieActivity extends BaseActivity {
     MovieFragment movieFragment;
 
     private String MOVIE_FRAGMENT = "movie_fragment";
-    private Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +56,17 @@ public class MovieActivity extends BaseActivity {
             getFragmentManager().beginTransaction().replace(R.id.movie_container, movieFragment).commit();
 
             if (detailContainer != null) {
-                movie = savedInstanceState.getParcelable(Constants.MOVIE_OBJECT);
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.movie_detail_container, MovieDetailFragment.newInstance(movie), DETAIL_FRAGMENT_TAG)
-                        .commit();
+                if (doesDetailFragmentExistInBackStack()) {
+                    MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getFragmentManager().findFragmentByTag(DETAIL_FRAGMENT_TAG);
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.movie_detail_container, movieDetailFragment, DETAIL_FRAGMENT_TAG)
+                            .commit();
+                }
             }
         } else {
             movieFragment = new MovieFragment();
-            getFragmentManager().beginTransaction().add(R.id.movie_container, movieFragment).commit();
+            getFragmentManager().beginTransaction().add(R.id.movie_container, movieFragment).addToBackStack(MOVIE_FRAGMENT).commit();
+
         }
 
 
@@ -87,17 +86,11 @@ public class MovieActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -106,9 +99,9 @@ public class MovieActivity extends BaseActivity {
     public void handleMoviePosterSelectionEvent(PopularMoviesEvent.MoviePosterSelectionEvent moviePosterSelectionEvent) {
         if (detailContainer != null) {
             if (moviePosterSelectionEvent.movie != null && detailContainer != null) {
-                movie = moviePosterSelectionEvent.movie;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.movie_detail_container, MovieDetailFragment.newInstance(moviePosterSelectionEvent.movie), DETAIL_FRAGMENT_TAG)
+                        .addToBackStack(DETAIL_FRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -123,7 +116,25 @@ public class MovieActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         //Save the fragment's instance
         getFragmentManager().putFragment(outState, MOVIE_FRAGMENT, movieFragment);
-        outState.putParcelable(Constants.MOVIE_OBJECT, movie);
+    }
+
+    /**
+     * checks {@link MovieDetailFragment} existence in back stack.
+     *
+     * @return returns true {@link MovieDetailFragment} exist in back stack.
+     */
+    private boolean doesDetailFragmentExistInBackStack() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            FragmentManager.BackStackEntry backEntry = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1);
+            String str = backEntry.getName();
+            if (str.equals(DETAIL_FRAGMENT_TAG)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
 }
