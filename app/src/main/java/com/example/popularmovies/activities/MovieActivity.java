@@ -18,7 +18,7 @@ import com.example.popularmovies.fragment.MovieDetailFragment;
 import com.example.popularmovies.fragment.MovieFragment;
 import com.squareup.otto.Subscribe;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 
 /**
@@ -28,11 +28,11 @@ import butterknife.Bind;
 public class MovieActivity extends BaseActivity {
     private static final String TAG = MovieActivity.class.getSimpleName();
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     @Nullable
-    @Bind(R.id.movie_detail_container)
+    @BindView(R.id.movie_detail_container)
     FrameLayout detailContainer;
 
     private String DETAIL_FRAGMENT_TAG = "detail_fragment";

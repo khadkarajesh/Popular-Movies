@@ -22,7 +22,7 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -39,7 +39,7 @@ public class MovieFragment extends BaseFragment {
     private RetrofitManager retrofitManager;
     private String TAG = MovieFragment.class.getSimpleName();
 
-    @Bind(R.id.gridView1)
+    @BindView(R.id.gridView1)
     GridView gridView;
 
     MovieAdapter duplicateMovieAdapter;

@@ -9,7 +9,7 @@ import com.example.popularmovies.R;
 import com.example.popularmovies.activities.base.BaseActivity;
 import com.example.popularmovies.fragment.SettingsFragment;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 
 
@@ -18,7 +18,7 @@ import butterknife.Bind;
  */
 public class SettingsActivity extends BaseActivity {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     @Override

@@ -42,7 +42,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
@@ -55,38 +55,38 @@ import retrofit.Retrofit;
 public class MovieDetailFragment extends BaseFragment {
     private Boolean favourite = false;
 
-    @Bind(R.id.img_movie_poster)
+    @BindView(R.id.img_movie_poster)
     ImageView moviePoster;
 
-    @Bind(R.id.tv_movie_title)
+    @BindView(R.id.tv_movie_title)
     TextView movieTitle;
 
-    @Bind(R.id.tv_releasing_date)
+    @BindView(R.id.tv_releasing_date)
     TextView releasingDate;
 
-    @Bind(R.id.tv_overview)
+    @BindView(R.id.tv_overview)
     TextView overView;
 
-    @Bind(R.id.rb_movie_rating)
+    @BindView(R.id.rb_movie_rating)
     RatingBar ratingBar;
 
 
     @Nullable
-    @Bind(R.id.fab)
+    @BindView(R.id.fab)
     FloatingActionButton floatingActionButton;
 
-    @Bind(R.id.ll_comments)
+    @BindView(R.id.ll_comments)
     LinearLayout llComments;
 
     @Nullable
-    @Bind(R.id.ll_trailers)
+    @BindView(R.id.ll_trailers)
     LinearLayout llTrailers;
 
-    @Bind(R.id.tv_comment_title)
+    @BindView(R.id.tv_comment_title)
     TextView tvCommentTitle;
 
     @Nullable
-    @Bind(R.id.tv_trailer_title)
+    @BindView(R.id.tv_trailer_title)
     TextView tvTrailerTitle;
 
     //Movie movie;
