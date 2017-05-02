@@ -18,5 +18,6 @@
     <string name="favourite_categories_value">favourite</string>
 
     <string name="content_authority">com.example.popularmovies</string>
+    <string name="email">hint_email</string>
 
 </resources>

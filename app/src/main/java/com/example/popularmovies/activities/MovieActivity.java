@@ -1,6 +1,7 @@
 package com.example.popularmovies.activities;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -142,6 +143,11 @@ public class MovieActivity extends BaseActivity {
         } else {
             return false;
         }
+    }
+
+    public static void show(Context context){
+        Intent intent=new Intent(context,MovieActivity.class);
+        context.startActivity(intent);
     }
 
 }
