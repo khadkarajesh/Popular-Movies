@@ -7,6 +7,7 @@ import android.widget.Button;
 
 import com.example.popularmovies.view.LoginActivity;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +52,8 @@ public class LoginActivityTest {
         mTilPassword.getEditText().setText(null);
         mBtnSignIn.performClick();
         ShadowApplication application = shadowOf(RuntimeEnvironment.application);
+        assertThat("Show username error ", mTilUsername.getError(), is(CoreMatchers.notNullValue()));
+        assertThat("Show password error ",mTilPassword.getError(), is(CoreMatchers.notNullValue()));
         assertThat("Next activity has not started",application.getNextStartedActivity(),is(nullValue()));
     }
 
