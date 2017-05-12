@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MovieFragment extends BaseFragment {
@@ -102,8 +102,8 @@ public class MovieFragment extends BaseFragment {
     private void fetchMoviesFromWeb(int pageNumber, String moviesCategories) {
         Callback<MoviesInfo> moviesInfoCallback = new Callback<MoviesInfo>() {
             @Override
-            public void onResponse(Response<MoviesInfo> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
+            public void onResponse(Call<MoviesInfo> call, Response<MoviesInfo> response) {
+                if (response.isSuccessful()) {
                     movieArrayList.addAll(response.body().movieList);
                     if (count == 0) {
                         setGridView(movieArrayList);
@@ -115,9 +115,10 @@ public class MovieFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<MoviesInfo> call, Throwable t) {
 
             }
+
         };
         retrofitManager.getMoviesInfo(moviesCategories, pageNumber, BuildConfig.MOVIE_API_KEY, moviesInfoCallback);
     }

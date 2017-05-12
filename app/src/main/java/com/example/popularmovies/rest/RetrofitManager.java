@@ -1,16 +1,16 @@
 package com.example.popularmovies.rest;
 
 import com.example.popularmovies.data.Constants;
+import com.example.popularmovies.rest.converters.ResponseEnvelopeConverterFactory;
 import com.example.popularmovies.rest.model.MovieComments;
 import com.example.popularmovies.rest.model.MovieTrailerInfo;
 import com.example.popularmovies.rest.model.MoviesInfo;
 import com.example.popularmovies.rest.service.IMovieService;
-import com.squareup.okhttp.OkHttpClient;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Singleton class for making the network call for specific url,getting response.
@@ -25,7 +25,7 @@ public class RetrofitManager {
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.MOVIE_BASE_URL)
-                .client(new OkHttpClient())
+                .addConverterFactory(new ResponseEnvelopeConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

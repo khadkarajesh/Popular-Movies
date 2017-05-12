@@ -45,9 +45,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * shows the details{movie title,release date, rating,comments,trailer via intent} of single movie.
@@ -251,9 +251,10 @@ public class MovieDetailFragment extends BaseFragment {
      */
     private void getCommentsFromWeb() {
         Callback<MovieComments> callback = new Callback<MovieComments>() {
+
             @Override
-            public void onResponse(Response<MovieComments> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
+            public void onResponse(Call<MovieComments> call, Response<MovieComments> response) {
+                if (response.isSuccessful()) {
                     comments = response.body().movieCommentList;
                     if (response.body().movieCommentList.size() > 0) {
                         showMovieComments(comments);
@@ -262,7 +263,7 @@ public class MovieDetailFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<MovieComments> call, Throwable t) {
 
             }
         };
@@ -354,23 +355,24 @@ public class MovieDetailFragment extends BaseFragment {
      */
     private void getTrailerKeyFromWeb() {
         if (trailers == null) {
-            retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
-                @Override
-                public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
-                    if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
-                        trailers = new ArrayList<>();
-                        trailerKey = response.body().movieTrailers.get(0).key;
-                        trailers.addAll(response.body().movieTrailers);
-                        showMovieTrailer(trailers);
+           Callback<MovieTrailerInfo> movieTrailerInfoCallback = new Callback<MovieTrailerInfo>() {
 
-                    }
-                }
+               @Override
+               public void onResponse(Call<MovieTrailerInfo> call, Response<MovieTrailerInfo> response) {
+                   if (response.isSuccessful() && response.body().movieTrailers.size() > 0) {
+                       trailers = new ArrayList<>();
+                       trailerKey = response.body().movieTrailers.get(0).key;
+                       trailers.addAll(response.body().movieTrailers);
+                       showMovieTrailer(trailers);
 
-                @Override
-                public void onFailure(Throwable t) {
+                   }
+               }
 
-                }
-            };
+               @Override
+               public void onFailure(Call<MovieTrailerInfo> call, Throwable t) {
+
+               }
+           };
             retrofitManager.getTrailer(mMovie.id, BuildConfig.MOVIE_API_KEY, movieTrailerInfoCallback);
         }
     }

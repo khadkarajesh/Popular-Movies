@@ -49,8 +49,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 /**
@@ -318,22 +318,24 @@ public class MovieDetailActivity extends BaseActivity {
      */
     private void getDataFromWeb() {
 
-        retrofit.Callback<MovieComments> callback = new retrofit.Callback<MovieComments>() {
-            @Override
-            public void onResponse(Response<MovieComments> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
-                    comments = response.body().movieCommentList;
-                    if (response.body().movieCommentList.size() > 0) {
-                        showMovieComments(comments);
-                    }
-                }
-            }
+       retrofit2.Callback<MovieComments> callback = new retrofit2.Callback<MovieComments>() {
 
-            @Override
-            public void onFailure(Throwable t) {
 
-            }
-        };
+           @Override
+           public void onResponse(Call<MovieComments> call, Response<MovieComments> response) {
+               if (response.isSuccessful()) {
+                   comments = response.body().movieCommentList;
+                   if (response.body().movieCommentList.size() > 0) {
+                       showMovieComments(comments);
+                   }
+               }
+           }
+
+           @Override
+           public void onFailure(Call<MovieComments> call, Throwable t) {
+
+           }
+       };
         retrofitManager.getComments(movie.id, BuildConfig.MOVIE_API_KEY, callback);
 
         getTrailerKeyFromWeb();
@@ -380,17 +382,18 @@ public class MovieDetailActivity extends BaseActivity {
      * fetch the movies trailer key from the web
      */
     private void getTrailerKeyFromWeb() {
-        retrofit.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit.Callback<MovieTrailerInfo>() {
+        retrofit2.Callback<MovieTrailerInfo> movieTrailerInfoCallback = new retrofit2.Callback<MovieTrailerInfo>() {
+
             @Override
-            public void onResponse(Response<MovieTrailerInfo> response, Retrofit retrofit) {
-                if (response.isSuccess() && response.body().movieTrailers.size() > 0) {
+            public void onResponse(Call<MovieTrailerInfo> call, Response<MovieTrailerInfo> response) {
+                if (response.isSuccessful() && response.body().movieTrailers.size() > 0) {
                     trailerKey = response.body().movieTrailers.get(0).key;
                     showMovieTrailer(response.body().movieTrailers);
                 }
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<MovieTrailerInfo> call, Throwable t) {
 
             }
         };
