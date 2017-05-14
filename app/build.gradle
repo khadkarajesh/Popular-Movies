@@ -63,4 +63,5 @@ dependencies {
     testCompile 'org.assertj:assertj-core:1.7.0'
     testCompile 'org.robolectric:shadows-core:3.0.rc2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'org.apache.commons:commons-lang3:3.5'
 }

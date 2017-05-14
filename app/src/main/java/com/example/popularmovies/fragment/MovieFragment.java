@@ -15,7 +15,6 @@ import com.example.popularmovies.data.MoviesContract;
 import com.example.popularmovies.fragment.base.BaseFragment;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
-import com.example.popularmovies.rest.model.MoviesInfo;
 import com.example.popularmovies.util.Utility;
 import com.squareup.otto.Subscribe;
 
@@ -100,11 +99,11 @@ public class MovieFragment extends BaseFragment {
      * @param moviesCategories movie categories{popular, top_rated}
      */
     private void fetchMoviesFromWeb(int pageNumber, String moviesCategories) {
-        Callback<MoviesInfo> moviesInfoCallback = new Callback<MoviesInfo>() {
+        Callback<List<Movie>> moviesInfoCallback = new Callback<List<Movie>>() {
             @Override
-            public void onResponse(Call<MoviesInfo> call, Response<MoviesInfo> response) {
+            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
                 if (response.isSuccessful()) {
-                    movieArrayList.addAll(response.body().movieList);
+                    movieArrayList.addAll(response.body());
                     if (count == 0) {
                         setGridView(movieArrayList);
                         count++;
@@ -115,10 +114,9 @@ public class MovieFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Call<MoviesInfo> call, Throwable t) {
+            public void onFailure(Call<List<Movie>> call, Throwable t) {
 
             }
-
         };
         retrofitManager.getMoviesInfo(moviesCategories, pageNumber, BuildConfig.MOVIE_API_KEY, moviesInfoCallback);
     }

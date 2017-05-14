@@ -2,10 +2,12 @@ package com.example.popularmovies.rest;
 
 import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.rest.converters.ResponseEnvelopeConverterFactory;
+import com.example.popularmovies.rest.model.Movie;
 import com.example.popularmovies.rest.model.MovieComments;
 import com.example.popularmovies.rest.model.MovieTrailerInfo;
-import com.example.popularmovies.rest.model.MoviesInfo;
 import com.example.popularmovies.rest.service.IMovieService;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,8 +49,8 @@ public class RetrofitManager {
      * @param apiKey     api key that is provided by themoviedb.com
      * @param callback   callback for getting response
      */
-    public void getMoviesInfo(String categories, int page, String apiKey, Callback<MoviesInfo> callback) {
-        Call<MoviesInfo> moviesInfoCall = iMovieService.getMoviesInfo(categories, page, apiKey);
+    public void getMoviesInfo(String categories, int page, String apiKey, Callback<List<Movie>> callback) {
+        Call<List<Movie>> moviesInfoCall = iMovieService.getMoviesInfo(categories, page, apiKey);
         moviesInfoCall.enqueue(callback);
     }
 
