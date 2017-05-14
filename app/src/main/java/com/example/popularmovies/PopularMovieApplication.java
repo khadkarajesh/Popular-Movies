@@ -1,6 +1,7 @@
 package com.example.popularmovies;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp.StethoInterceptor;
@@ -8,10 +9,8 @@ import com.squareup.okhttp.OkHttpClient;
 
 import timber.log.Timber;
 
-/**
- * Created by rajesh on 10/29/15.
- */
 public class PopularMovieApplication extends Application {
+    public static Context context;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -24,6 +23,10 @@ public class PopularMovieApplication extends Application {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+        context=this;
+    }
 
+    public static Context get(){
+        return context;
     }
 }
