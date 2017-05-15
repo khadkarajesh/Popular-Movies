@@ -52,7 +52,7 @@ public class MovieFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //get instance of retrofit manager class for network call
+        //getById instance of retrofit manager class for network call
         retrofitManager = RetrofitManager.getInstance();
 
         //register the event bus for listening the movie categories change event

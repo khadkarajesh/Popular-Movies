@@ -7,6 +7,7 @@ import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.OkHttpClient;
 
+import io.realm.Realm;
 import timber.log.Timber;
 
 public class PopularMovieApplication extends Application {
@@ -24,6 +25,7 @@ public class PopularMovieApplication extends Application {
             Timber.plant(new Timber.DebugTree());
         }
         context=this;
+        Realm.init(this);
     }
 
     public static Context get(){

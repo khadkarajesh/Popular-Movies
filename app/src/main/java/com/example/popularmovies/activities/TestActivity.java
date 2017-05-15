@@ -7,6 +7,7 @@ import com.example.popularmovies.BuildConfig;
 import com.example.popularmovies.R;
 import com.example.popularmovies.activities.base.BaseActivity;
 import com.example.popularmovies.bus.PopularMoviesEvent;
+import com.example.popularmovies.data.MovieService;
 import com.example.popularmovies.rest.BaseCallback;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
@@ -19,6 +20,7 @@ import retrofit2.Callback;
 public class TestActivity extends BaseActivity {
 
     private static final String TAG = TestActivity.class.getSimpleName();
+    private MovieService mMovieService = new MovieService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +30,16 @@ public class TestActivity extends BaseActivity {
             @Override
             public void onSuccess(List<Movie> movies) {
                 if (!movies.isEmpty()) {
-                    Log.d(TAG, "onSuccess: " + movies.size());
+                    mMovieService.saveAll(movies);
                 }
             }
         };
         RetrofitManager.getInstance().getMoviesInfo("popular", 1, BuildConfig.MOVIE_API_KEY, moviesInfoCallback);
 
+
+        for (Movie movie : mMovieService.getAll()) {
+            Log.d(TAG, "onCreate: " + movie.title);
+        }
     }
 
     @Override

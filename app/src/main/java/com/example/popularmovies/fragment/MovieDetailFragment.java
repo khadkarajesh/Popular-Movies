@@ -247,7 +247,7 @@ public class MovieDetailFragment extends BaseFragment {
     }
 
     /**
-     * get comments of movie having specific id from web
+     * getById comments of movie having specific id from web
      */
     private void getCommentsFromWeb() {
         Callback<MovieComments> callback = new Callback<MovieComments>() {

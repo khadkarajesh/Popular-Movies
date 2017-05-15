@@ -33,7 +33,7 @@ public class MovieTrailer {
            public void onResponse(Call<MovieTrailerInfo> call, Response<MovieTrailerInfo> response) {
                if (response.isSuccessful() && response.body().movieTrailers.size() > 0) {
                    Log.e(TAG, "key" + response.body().movieTrailers.get(0).key);
-                   //playTrailer(response.body().movieTrailers.get(0).key);
+                   //playTrailer(response.body().movieTrailers.getById(0).key);
                    result[0] = response.body().movieTrailers.get(0).key;
 
                }

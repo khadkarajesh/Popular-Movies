@@ -117,7 +117,7 @@ public class MovieDetailActivity extends BaseActivity {
         //for making status bar transulent
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
-        //get the single movie data passed form intent
+        //getById the single movie data passed form intent
         movie = getIntent().getParcelableExtra(Constants.MOVIE_OBJECT);
 
         //set the toolbar
@@ -314,7 +314,7 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     /**
-     * get comments of movie having specific id from web
+     * getById comments of movie having specific id from web
      */
     private void getDataFromWeb() {
 

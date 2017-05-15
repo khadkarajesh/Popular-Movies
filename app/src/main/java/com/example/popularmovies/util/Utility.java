@@ -25,7 +25,7 @@ public class Utility {
     }
 
     /**
-     * get movie categories that is stored in the default sharedPreferences
+     * getById movie categories that is stored in the default sharedPreferences
      *
      * @return returns the movie categories{i-e popular/top_rated}
      */

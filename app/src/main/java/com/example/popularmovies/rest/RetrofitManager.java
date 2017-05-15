@@ -50,7 +50,7 @@ public class RetrofitManager {
     }
 
     /**
-     * get movies information
+     * getById movies information
      *
      * @param categories categories {popular,top_rated}
      * @param page       for getting data of specific page number
