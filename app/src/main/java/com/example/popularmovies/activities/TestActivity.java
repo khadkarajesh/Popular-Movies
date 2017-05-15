@@ -14,7 +14,6 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import retrofit2.Call;
 import retrofit2.Callback;
 
 public class TestActivity extends BaseActivity {
@@ -26,17 +25,11 @@ public class TestActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         Callback<List<Movie>> moviesInfoCallback = new BaseCallback<List<Movie>>() {
-
             @Override
             public void onSuccess(List<Movie> movies) {
                 if (!movies.isEmpty()) {
                     Log.d(TAG, "onSuccess: " + movies.size());
                 }
-            }
-
-            @Override
-            public void onFailure(Call<List<Movie>> call, String message) {
-
             }
         };
         RetrofitManager.getInstance().getMoviesInfo("popular", 1, BuildConfig.MOVIE_API_KEY, moviesInfoCallback);

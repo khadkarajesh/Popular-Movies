@@ -9,6 +9,8 @@ import com.example.popularmovies.rest.service.IMovieService;
 
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -24,8 +26,14 @@ public class RetrofitManager {
     public static RetrofitManager retrofitManager = null;
 
     private RetrofitManager() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
 
         retrofit = new Retrofit.Builder()
+                .client(client)
                 .baseUrl(Constants.MOVIE_BASE_URL)
                 .addConverterFactory(new ResponseEnvelopeConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
