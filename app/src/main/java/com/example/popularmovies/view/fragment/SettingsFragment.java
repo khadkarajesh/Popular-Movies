@@ -1,4 +1,4 @@
-package com.example.popularmovies.fragment;
+package com.example.popularmovies.view.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.util.Log;
 
 import com.example.popularmovies.R;
 import com.example.popularmovies.bus.EventBus;

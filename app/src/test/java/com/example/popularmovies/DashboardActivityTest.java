@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.popularmovies.view.DashBoardActivity;
+import com.example.popularmovies.view.activity.DashBoardActivity;
 
 import org.junit.Before;
 import org.junit.Test;

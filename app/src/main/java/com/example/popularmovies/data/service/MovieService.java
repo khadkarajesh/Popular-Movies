@@ -1,6 +1,8 @@
-package com.example.popularmovies.data;
+package com.example.popularmovies.data.service;
 
 
+import com.example.popularmovies.base.service.BaseService;
+import com.example.popularmovies.data.model.RealmMovieObject;
 import com.example.popularmovies.rest.model.Movie;
 
 import java.util.ArrayList;

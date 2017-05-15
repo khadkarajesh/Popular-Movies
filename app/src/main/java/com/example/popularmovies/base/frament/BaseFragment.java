@@ -1,4 +1,4 @@
-package com.example.popularmovies.fragment.base;
+package com.example.popularmovies.base.frament;
 
 import android.app.Fragment;
 import android.os.Bundle;

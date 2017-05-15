@@ -1,4 +1,4 @@
-package com.example.popularmovies.fragment;
+package com.example.popularmovies.view.fragment;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -29,7 +29,7 @@ import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.data.MoviesContract;
-import com.example.popularmovies.fragment.base.BaseFragment;
+import com.example.popularmovies.base.frament.BaseFragment;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
 import com.example.popularmovies.rest.model.MovieComment;

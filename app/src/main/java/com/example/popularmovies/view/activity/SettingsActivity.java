@@ -1,4 +1,4 @@
-package com.example.popularmovies.activities;
+package com.example.popularmovies.view.activity;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -6,8 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.popularmovies.R;
-import com.example.popularmovies.activities.base.BaseActivity;
-import com.example.popularmovies.fragment.SettingsFragment;
+import com.example.popularmovies.base.activity.BaseActivity;
+import com.example.popularmovies.view.fragment.SettingsFragment;
 
 import butterknife.BindView;
 

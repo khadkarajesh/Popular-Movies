@@ -1,4 +1,4 @@
-package com.example.popularmovies.fragment;
+package com.example.popularmovies.view.fragment;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import com.example.popularmovies.adapter.MovieAdapter;
 import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.MoviesContract;
-import com.example.popularmovies.fragment.base.BaseFragment;
+import com.example.popularmovies.base.frament.BaseFragment;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;
 import com.example.popularmovies.util.Utility;

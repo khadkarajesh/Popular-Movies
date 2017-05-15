@@ -1,4 +1,4 @@
-package com.example.popularmovies.realm;
+package com.example.popularmovies.base.data;
 
 
 public interface IDatabaseManager<T> {

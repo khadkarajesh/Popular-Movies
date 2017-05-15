@@ -1,4 +1,4 @@
-package com.example.popularmovies.data;
+package com.example.popularmovies.base.service;
 
 
 import java.util.List;

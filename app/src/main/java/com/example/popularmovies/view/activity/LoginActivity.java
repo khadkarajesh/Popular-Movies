@@ -1,4 +1,4 @@
-package com.example.popularmovies.view;
+package com.example.popularmovies.view.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.popularmovies.R;
-import com.example.popularmovies.activities.MovieActivity;
 
 public class LoginActivity extends AppCompatActivity {
     TextInputLayout mTilPassword;

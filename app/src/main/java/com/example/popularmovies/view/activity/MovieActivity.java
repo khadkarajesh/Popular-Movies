@@ -1,4 +1,4 @@
-package com.example.popularmovies.activities;
+package com.example.popularmovies.view.activity;
 
 import android.app.FragmentManager;
 import android.content.Context;
@@ -11,12 +11,12 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.example.popularmovies.R;
-import com.example.popularmovies.activities.base.BaseActivity;
+import com.example.popularmovies.base.activity.BaseActivity;
 import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.Constants;
 import com.example.popularmovies.data.MovieDbHelper;
-import com.example.popularmovies.fragment.MovieDetailFragment;
-import com.example.popularmovies.fragment.MovieFragment;
+import com.example.popularmovies.view.fragment.MovieDetailFragment;
+import com.example.popularmovies.view.fragment.MovieFragment;
 import com.squareup.otto.Subscribe;
 
 import butterknife.BindView;

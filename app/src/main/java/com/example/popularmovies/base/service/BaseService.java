@@ -1,7 +1,7 @@
-package com.example.popularmovies.data;
+package com.example.popularmovies.base.service;
 
 
-import com.example.popularmovies.realm.RealmManager;
+import com.example.popularmovies.data.manager.RealmManager;
 
 public abstract class BaseService<T> implements IBaseService<T> {
     public RealmManager manager;

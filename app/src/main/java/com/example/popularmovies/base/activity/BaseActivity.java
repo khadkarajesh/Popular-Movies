@@ -1,4 +1,4 @@
-package com.example.popularmovies.activities.base;
+package com.example.popularmovies.base.activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;

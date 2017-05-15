@@ -1,4 +1,4 @@
-package com.example.popularmovies.activities;
+package com.example.popularmovies.view.activity;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 import com.example.popularmovies.BuildConfig;
 import com.example.popularmovies.R;
-import com.example.popularmovies.activities.base.BaseActivity;
+import com.example.popularmovies.base.activity.BaseActivity;
 import com.example.popularmovies.bus.EventBus;
 import com.example.popularmovies.bus.PopularMoviesEvent;
 import com.example.popularmovies.data.Constants;

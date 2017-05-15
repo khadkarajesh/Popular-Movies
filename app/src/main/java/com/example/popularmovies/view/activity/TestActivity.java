@@ -1,13 +1,13 @@
-package com.example.popularmovies.activities;
+package com.example.popularmovies.view.activity;
 
 import android.os.Bundle;
 import android.util.Log;
 
 import com.example.popularmovies.BuildConfig;
 import com.example.popularmovies.R;
-import com.example.popularmovies.activities.base.BaseActivity;
+import com.example.popularmovies.base.activity.BaseActivity;
 import com.example.popularmovies.bus.PopularMoviesEvent;
-import com.example.popularmovies.data.MovieService;
+import com.example.popularmovies.data.service.MovieService;
 import com.example.popularmovies.rest.BaseCallback;
 import com.example.popularmovies.rest.RetrofitManager;
 import com.example.popularmovies.rest.model.Movie;

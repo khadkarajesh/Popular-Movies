@@ -1,5 +1,7 @@
-package com.example.popularmovies.realm;
+package com.example.popularmovies.data.manager;
 
+
+import com.example.popularmovies.base.data.BaseDatabaseManager;
 
 import io.realm.Realm;
 

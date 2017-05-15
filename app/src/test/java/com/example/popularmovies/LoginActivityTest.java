@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.support.design.widget.TextInputLayout;
 import android.widget.Button;
 
-import com.example.popularmovies.view.LoginActivity;
+import com.example.popularmovies.view.activity.LoginActivity;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
